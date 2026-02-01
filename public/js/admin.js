@@ -161,14 +161,18 @@ const AdminAPI = {
     return await apiRequest('/campaigns');
   },
 
-  async createCampaign(formData) {
-    // formData должен быть экземпляром FormData
-    return await apiRequestFormData('/campaigns', formData, 'POST');
+  async createCampaign(data) {
+    return await apiRequest('/campaigns', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
   },
 
-  async updateCampaign(id, formData) {
-    // formData должен быть экземпляром FormData
-    return await apiRequestFormData(`/campaigns/${id}`, formData, 'PUT');
+  async updateCampaign(id, data) {
+    return await apiRequest(`/campaigns/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    });
   },
 
   async deleteCampaign(id) {

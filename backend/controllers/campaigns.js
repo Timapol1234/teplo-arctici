@@ -84,30 +84,17 @@ async function getCampaignById(req, res) {
 // Создать новый сбор (админ)
 async function createCampaign(req, res) {
   try {
-    const { title, description, goal_amount, is_active, end_date } = req.body;
-
-    // Используем загруженный файл или URL из body
-    let imageUrl = req.body.image_url || null;
-    if (req.file) {
-      imageUrl = `/uploads/campaigns/${req.file.filename}`;
-    }
+    const { title, description, goal_amount, image_url, is_active, end_date } = req.body;
 
     // Конвертируем is_active в boolean для PostgreSQL
-    let isActiveValue = true; // По умолчанию активен
-    if (is_active !== undefined && is_active !== null) {
-      if (typeof is_active === 'string') {
-        isActiveValue = (is_active === 'true' || is_active === 'on' || is_active === '1');
-      } else {
-        isActiveValue = Boolean(is_active);
-      }
-    }
+    const isActiveValue = is_active !== false && is_active !== 'false';
 
     const result = await db.query(
       `INSERT INTO campaigns
        (title, description, goal_amount, image_url, is_active, end_date)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING id, created_at`,
-      [title, description, goal_amount, imageUrl, isActiveValue, end_date || null]
+      [title, description, goal_amount, image_url || null, isActiveValue, end_date || null]
     );
 
     res.status(201).json({
@@ -127,34 +114,16 @@ async function createCampaign(req, res) {
 async function updateCampaign(req, res) {
   try {
     const { id } = req.params;
-    const { title, description, goal_amount, is_active, end_date } = req.body;
+    const { title, description, goal_amount, image_url, is_active, end_date } = req.body;
 
     // Проверяем существование сбора
-    const checkResult = await db.query('SELECT id, image_url FROM campaigns WHERE id = $1', [id]);
+    const checkResult = await db.query('SELECT id FROM campaigns WHERE id = $1', [id]);
     if (checkResult.rows.length === 0) {
       return res.status(404).json({ error: 'Сбор не найден' });
     }
 
-    // Определяем URL изображения
-    let imageUrl = checkResult.rows[0].image_url; // Сохраняем текущее по умолчанию
-    if (req.file) {
-      // Загружен новый файл
-      imageUrl = `/uploads/campaigns/${req.file.filename}`;
-    } else if (req.body.image_url !== undefined) {
-      // Передан URL (или пустая строка для удаления)
-      imageUrl = req.body.image_url || null;
-    }
-
-    // Обрабатываем is_active (может прийти как строка из FormData)
-    // Конвертируем в boolean для PostgreSQL
-    let isActive = null;
-    if (is_active !== undefined && is_active !== null) {
-      if (typeof is_active === 'string') {
-        isActive = (is_active === 'true' || is_active === 'on' || is_active === '1');
-      } else {
-        isActive = Boolean(is_active);
-      }
-    }
+    // Конвертируем is_active в boolean
+    const isActive = is_active !== false && is_active !== 'false';
 
     const result = await db.query(
       `UPDATE campaigns
@@ -163,11 +132,11 @@ async function updateCampaign(req, res) {
          description = COALESCE($2, description),
          goal_amount = COALESCE($3, goal_amount),
          image_url = $4,
-         is_active = COALESCE($5, is_active),
-         end_date = COALESCE($6, end_date)
+         is_active = $5,
+         end_date = $6
        WHERE id = $7
        RETURNING *`,
-      [title, description, goal_amount, imageUrl, isActive, end_date, id]
+      [title, description, goal_amount, image_url || null, isActive, end_date || null, id]
     );
 
     res.json({

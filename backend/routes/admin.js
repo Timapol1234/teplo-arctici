@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
-const { handleReceiptUpload, handleCampaignImageUpload } = require('../middleware/upload');
+const { handleReceiptUpload } = require('../middleware/upload');
 const {
   validateDonation,
   validateCampaign,
@@ -29,8 +29,8 @@ router.post('/donations', validateDonation, donationsController.createDonation);
 
 // Campaigns
 router.get('/campaigns', campaignsController.getAllCampaigns);
-router.post('/campaigns', handleCampaignImageUpload, validateCampaign, campaignsController.createCampaign);
-router.put('/campaigns/:id', handleCampaignImageUpload, validateCampaign, campaignsController.updateCampaign);
+router.post('/campaigns', validateCampaign, campaignsController.createCampaign);
+router.put('/campaigns/:id', validateCampaign, campaignsController.updateCampaign);
 router.delete('/campaigns/:id', campaignsController.deleteCampaign);
 
 // Reports
