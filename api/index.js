@@ -12,6 +12,9 @@ const verificationRoutes = require('../backend/routes/verification');
 
 const app = express();
 
+// Trust proxy for Vercel/cloud deployments (needed for rate limiting)
+app.set('trust proxy', 1);
+
 // Middleware для безопасности
 app.use(helmet({
   contentSecurityPolicy: {

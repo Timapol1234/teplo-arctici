@@ -50,6 +50,11 @@ function checkSecurityConfig() {
 
 checkSecurityConfig();
 
+// Trust proxy for cloud deployments (needed for rate limiting behind reverse proxy)
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
 // Middleware для безопасности
 app.use(helmet({
   contentSecurityPolicy: {
