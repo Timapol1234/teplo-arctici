@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
-const { handleReceiptUpload } = require('../middleware/upload');
+const { uploadCampaignImage, uploadReportReceipt } = require('../config/cloudinary');
 const {
   validateDonation,
   validateCampaign,
@@ -27,16 +27,16 @@ router.post('/change-password', authController.changePassword);
 router.get('/donations', donationsController.getAllDonations);
 router.post('/donations', validateDonation, donationsController.createDonation);
 
-// Campaigns
+// Campaigns (с загрузкой изображений через Cloudinary)
 router.get('/campaigns', campaignsController.getAllCampaigns);
-router.post('/campaigns', validateCampaign, campaignsController.createCampaign);
-router.put('/campaigns/:id', validateCampaign, campaignsController.updateCampaign);
+router.post('/campaigns', uploadCampaignImage, validateCampaign, campaignsController.createCampaign);
+router.put('/campaigns/:id', uploadCampaignImage, validateCampaign, campaignsController.updateCampaign);
 router.delete('/campaigns/:id', campaignsController.deleteCampaign);
 
-// Reports
+// Reports (с загрузкой чеков через Cloudinary)
 router.get('/reports', reportsController.getAllReports);
-router.post('/reports', handleReceiptUpload, validateReport, reportsController.createReport);
-router.put('/reports/:id', handleReceiptUpload, reportsController.updateReport);
+router.post('/reports', uploadReportReceipt, validateReport, reportsController.createReport);
+router.put('/reports/:id', uploadReportReceipt, reportsController.updateReport);
 router.delete('/reports/:id', reportsController.deleteReport);
 
 module.exports = router;

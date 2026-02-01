@@ -127,16 +127,30 @@
                 <textarea id="campaign-description" name="description" class="w-full min-h-[240px] p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none outline-none" placeholder="Расскажите подробнее о целях сбора и людях, которым нужна помощь..." required></textarea>
               </div>
 
-              <!-- Image URL Input -->
+              <!-- Image Upload -->
               <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                <label class="block mb-2 text-slate-900 dark:text-white font-semibold">Ссылка на изображение</label>
-                <input id="campaign-image-url" name="image_url" class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="https://example.com/image.jpg" type="url"/>
-                <p class="mt-2 text-xs text-slate-500">Вставьте URL изображения (Unsplash, Imgur и т.д.)</p>
+                <label class="block mb-4 text-slate-900 dark:text-white font-semibold">Изображение баннера</label>
 
-                <!-- Превью -->
-                <div id="image-preview-container" class="hidden mt-4">
-                  <img id="image-preview" class="max-h-48 rounded-lg border border-slate-200 dark:border-slate-700" src="" alt="Превью"/>
+                <!-- Превью изображения -->
+                <div id="image-preview-container" class="hidden mb-4">
+                  <div class="relative inline-block">
+                    <img id="image-preview" class="max-h-48 rounded-lg border border-slate-200 dark:border-slate-700" src="" alt="Превью"/>
+                    <button type="button" id="remove-image-btn" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg transition-colors">
+                      <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  </div>
                 </div>
+
+                <!-- Зона загрузки -->
+                <label id="upload-zone" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
+                  <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <span class="material-symbols-outlined text-4xl text-slate-400 mb-2">cloud_upload</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400"><span class="font-semibold text-primary">Нажмите для выбора</span> или перетащите файл</p>
+                    <p class="text-xs text-slate-500 mt-1">PNG, JPG, WebP (макс. 10MB)</p>
+                  </div>
+                  <input id="campaign-image" name="image_file" class="hidden" type="file" accept="image/jpeg,image/png,image/gif,image/webp"/>
+                </label>
+                <p class="mt-2 text-xs text-slate-500">Рекомендуемый размер: 1200x600px</p>
               </div>
             </form>
           </div>
@@ -204,9 +218,11 @@
     </main>
   </div>
 
-  <script src="/js/admin.js?v=7"></script>
+  <script src="/js/admin.js?v=8"></script>
   <script>
     let editingCampaignId = null;
+    let selectedImageFile = null;
+    let existingImageUrl = null;
 
     // Инициализация
     document.addEventListener('DOMContentLoaded', async () => {
@@ -216,7 +232,7 @@
       initLogout();
       initThemeToggle();
       loadAdminInfo();
-      initImageUrlPreview();
+      initImageUpload();
       await loadCampaigns();
 
       // Обработчики
@@ -225,38 +241,78 @@
       document.getElementById('campaign-form').addEventListener('submit', handleCampaignSubmit);
     });
 
-    // Превью изображения по URL
-    function initImageUrlPreview() {
-      const urlInput = document.getElementById('campaign-image-url');
-      const preview = document.getElementById('image-preview');
-      const previewContainer = document.getElementById('image-preview-container');
+    // Инициализация загрузки изображений
+    function initImageUpload() {
+      const fileInput = document.getElementById('campaign-image');
+      const uploadZone = document.getElementById('upload-zone');
+      const removeBtn = document.getElementById('remove-image-btn');
 
-      urlInput.addEventListener('input', () => {
-        const url = urlInput.value.trim();
-        if (url) {
-          preview.src = url;
-          preview.onload = () => previewContainer.classList.remove('hidden');
-          preview.onerror = () => previewContainer.classList.add('hidden');
-        } else {
-          previewContainer.classList.add('hidden');
-        }
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleImageSelect(file);
       });
+
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('border-primary', 'bg-primary/10');
+      });
+
+      uploadZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-primary', 'bg-primary/10');
+      });
+
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-primary', 'bg-primary/10');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) handleImageSelect(file);
+      });
+
+      removeBtn.addEventListener('click', clearImageSelection);
+    }
+
+    // Обработка выбора изображения
+    function handleImageSelect(file) {
+      if (!file.type.startsWith('image/')) {
+        UI.showError('Выберите изображение');
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        UI.showError('Файл слишком большой. Максимум 10MB');
+        return;
+      }
+
+      selectedImageFile = file;
+      existingImageUrl = null;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('image-preview').src = e.target.result;
+        document.getElementById('image-preview-container').classList.remove('hidden');
+        document.getElementById('upload-zone').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
     }
 
     // Показать существующее изображение
     function showExistingImage(url) {
       if (url) {
-        document.getElementById('campaign-image-url').value = url;
+        existingImageUrl = url;
         document.getElementById('image-preview').src = url;
         document.getElementById('image-preview-container').classList.remove('hidden');
+        document.getElementById('upload-zone').classList.add('hidden');
       }
     }
 
-    // Очистка изображения
+    // Очистка выбора изображения
     function clearImageSelection() {
-      document.getElementById('campaign-image-url').value = '';
+      selectedImageFile = null;
+      existingImageUrl = null;
+      document.getElementById('campaign-image').value = '';
       document.getElementById('image-preview').src = '';
       document.getElementById('image-preview-container').classList.add('hidden');
+      document.getElementById('upload-zone').classList.remove('hidden');
     }
 
     // Загрузка информации администратора
@@ -427,25 +483,30 @@
     async function handleCampaignSubmit(e) {
       e.preventDefault();
 
-      const data = {
-        title: document.getElementById('campaign-title').value,
-        description: document.getElementById('campaign-description').value,
-        goal_amount: parseFloat(document.getElementById('campaign-goal').value),
-        is_active: document.getElementById('campaign-active').checked,
-        image_url: document.getElementById('campaign-image-url').value.trim() || null
-      };
+      const formData = new FormData();
+      formData.append('title', document.getElementById('campaign-title').value);
+      formData.append('description', document.getElementById('campaign-description').value);
+      formData.append('goal_amount', document.getElementById('campaign-goal').value);
+      formData.append('is_active', document.getElementById('campaign-active').checked ? 'true' : 'false');
 
       const endDate = document.getElementById('campaign-end-date').value;
       if (endDate) {
-        data.end_date = endDate;
+        formData.append('end_date', endDate);
+      }
+
+      // Добавляем изображение
+      if (selectedImageFile) {
+        formData.append('image_file', selectedImageFile);
+      } else if (existingImageUrl) {
+        formData.append('image_url', existingImageUrl);
       }
 
       try {
         if (editingCampaignId) {
-          await AdminAPI.updateCampaign(editingCampaignId, data);
+          await AdminAPI.updateCampaign(editingCampaignId, formData);
           UI.showNotification('Сбор успешно обновлен');
         } else {
-          await AdminAPI.createCampaign(data);
+          await AdminAPI.createCampaign(formData);
           UI.showNotification('Сбор успешно создан');
         }
 
