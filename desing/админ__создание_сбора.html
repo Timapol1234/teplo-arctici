@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Админ: Создание сбора - Тепло Арктики</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13a4ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-nav {
+            background-color: #13a4ec20;
+            color: #13a4ec;
+            border-right: 4px solid #13a4ec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="flex min-h-screen">
+<!-- Sidebar -->
+<aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col sticky top-0 h-screen">
+<div class="p-6 flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined">ac_unit</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-[#0d171b] dark:text-white text-base font-bold leading-tight">Тепло Арктики</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Админ-панель</p>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Главная</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg active-nav text-primary font-semibold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">handshake</span>
+<span class="text-sm">Управление сборами</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Отчеты</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Настройки</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3 p-2">
+<div class="size-8 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Administrator profile photo avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDVaKP5twvAchQLqADIS-Z-fQxTW4pdP-yruB5LILcEz2n5QUU-RleTcsWQS--qJdueM-vnE9HaXNlFmq5S3rQkrK6YLL5cpSjTsV13LxtkP4og0u_jcV1g9qmjXx3r1FvVqKZYaor1Uh-U_FL9CeJgDvDFXX_H190K38Jch1hZ-WOqdG1_zPA64zpf7J92YiRIci4hHYVJuj9UwXKVpE2JfqCcMc3P_UmRqIG1iZlgPU4PuXR0ciciRvplNUz144Ezvpnh-s-N6XVI')"></div>
+<div class="flex-1 overflow-hidden">
+<p class="text-sm font-medium truncate">Александр В.</p>
+<p class="text-xs text-slate-500 truncate">Администратор</p>
+</div>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-red-500 transition-colors">logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col">
+<!-- Header & Breadcrumbs -->
+<header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4">
+<nav class="flex items-center gap-2 mb-2">
+<a class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="#">Сборы</a>
+<span class="text-slate-300 dark:text-slate-600 text-sm">/</span>
+<span class="text-slate-900 dark:text-white text-sm font-medium">Создание нового сбора</span>
+</nav>
+<div class="flex justify-between items-center">
+<h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Создание нового сбора</h2>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">Отмена</button>
+<button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold shadow-md shadow-primary/20 transition-all">Опубликовать сбор</button>
+</div>
+</div>
+</header>
+<!-- Form Area -->
+<div class="p-8 max-w-5xl">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Form Info -->
+<div class="lg:col-span-2 space-y-6">
+<!-- Title Input -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<label class="block mb-2 text-slate-900 dark:text-white font-semibold">Название сбора</label>
+<input class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Введите название целевого сбора" type="text"/>
+</div>
+<!-- Description Input with Toolbar -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<label class="block mb-2 text-slate-900 dark:text-white font-semibold">Описание сбора</label>
+<div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-slate-50 dark:bg-slate-800">
+<!-- Toolbar -->
+<div class="flex items-center gap-1 p-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-[20px]">format_bold</span>
+</button>
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-[20px]">format_italic</span>
+</button>
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+</button>
+<div class="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-[20px]">link</span>
+</button>
+<button class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-600 dark:text-slate-400">
+<span class="material-symbols-outlined text-[20px]">image</span>
+</button>
+</div>
+<!-- Textarea -->
+<textarea class="w-full min-h-[240px] p-4 bg-transparent border-none text-slate-900 dark:text-white focus:ring-0 resize-none" placeholder="Расскажите подробнее о целях сбора и людях, которым нужна помощь..."></textarea>
+</div>
+</div>
+<!-- Media Upload -->
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<label class="block mb-4 text-slate-900 dark:text-white font-semibold">Основной баннер сбора</label>
+<div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+<div class="size-14 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">upload_file</span>
+</div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white mb-1">Перетащите изображение сюда</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 text-center">Рекомендуемый размер 1200x600px. <br/>Форматы: JPG, PNG (до 5МБ)</p>
+<button class="mt-4 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-sm font-medium rounded-lg hover:border-primary hover:text-primary transition-all">Выбрать файл</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Settings Card -->
+<div class="space-y-6">
+<div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Параметры сбора</h3>
+<!-- Goal Amount -->
+<div class="mb-6">
+<label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Требуемая сумма</label>
+<div class="relative">
+<input class="w-full h-12 pl-4 pr-12 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="0" type="number"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">₽</div>
+</div>
+</div>
+<!-- Status Toggle -->
+<div class="flex items-center justify-between py-4 border-t border-slate-100 dark:border-slate-800">
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white leading-tight">Статус активности</p>
+<p class="text-xs text-slate-500">Сбор будет виден на сайте</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Date Picker Mock -->
+<div class="pt-4 border-t border-slate-100 dark:border-slate-800">
+<label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Дата окончания (опционально)</label>
+<div class="flex items-center gap-2 px-4 h-12 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-500">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span class="text-sm">Выберите дату</span>
+</div>
+</div>
+</div>
+<!-- Quick Help -->
+<div class="bg-primary/5 dark:bg-primary/10 p-5 rounded-xl border border-primary/20">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary">info</span>
+<div>
+<h4 class="text-sm font-bold text-primary mb-1">Советы по заполнению</h4>
+<ul class="text-xs text-slate-600 dark:text-slate-400 space-y-2 list-disc pl-3">
+<li>Используйте качественное фото для обложки</li>
+<li>Четко опишите, на что именно пойдут средства</li>
+<li>Указывайте реалистичную сумму сбора</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

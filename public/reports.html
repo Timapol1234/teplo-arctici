@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Отчеты о расходах - Тепло Арктики</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+    <header class="sticky top-0 z-50 w-full border-b border-[#e7edf3] dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 lg:px-20 py-3">
+        <div class="max-w-[1200px] mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-4">
+                <div class="size-8 text-primary">
+                    <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h2 class="text-[#0d141b] dark:text-white text-xl font-black tracking-tight">Тепло Арктики</h2>
+            </a>
+            <nav class="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/">Главная</a>
+                <a class="text-sm font-semibold text-primary transition-colors" href="/reports.html">Отчеты</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/about.html">О нас</a>
+            </nav>
+            <div class="hidden md:block w-[100px]"></div>
+        </div>
+    </header>
+
+    <main class="max-w-[1024px] mx-auto px-4 py-8">
+        <!-- Заголовок -->
+        <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
+            <div class="flex flex-col gap-2">
+                <h1 class="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-tight">Отчеты о расходах</h1>
+                <p class="text-[#4c739a] dark:text-slate-400 text-base">
+                    Прозрачная отчетность в реальном времени и подтверждение каждого рубля
+                </p>
+            </div>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="flex flex-col gap-4 px-4 py-4 bg-white dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm mb-8">
+            <div class="flex flex-wrap items-center gap-4">
+                <span class="text-sm font-semibold text-[#4c739a]">Выберите сбор:</span>
+                <select id="campaignSelect" class="h-10 px-4 rounded-lg border-0 bg-primary text-white font-medium text-sm focus:ring-2 focus:ring-primary/50 cursor-pointer">
+                    <option value="">Все сборы</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Список отчетов -->
+        <div id="reportsContainer">
+            <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+                <span class="material-symbols-outlined text-6xl mb-4 animate-pulse">hourglass_empty</span>
+                <p>Загрузка отчетов...</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 py-10 mt-12">
+        <div class="max-w-[1024px] mx-auto px-4 text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full mb-4">
+                <span class="material-symbols-outlined text-sm">verified</span>
+                <span class="text-xs font-bold uppercase tracking-widest">Публичный аудит данных</span>
+            </div>
+            <p class="text-sm text-[#4c739a] dark:text-slate-400 max-w-lg mx-auto">
+                Все финансовые данные публикуются открыто. По всем вопросам: info@teplo-arctici.ru
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        function formatAmount(amount) {
+            return new Intl.NumberFormat('ru-RU').format(amount) + '₽';
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        function getDocumentIcon(url) {
+            if (!url) return 'description';
+            const ext = url.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return 'image';
+            if (ext === 'pdf') return 'picture_as_pdf';
+            if (['doc', 'docx'].includes(ext)) return 'article';
+            return 'description';
+        }
+
+        async function loadCampaigns() {
+            try {
+                const response = await fetch(`${API_BASE}/campaigns`);
+                const campaigns = await response.json();
+
+                const select = document.getElementById('campaignSelect');
+                select.innerHTML = '<option value="">Все сборы</option>' +
+                    campaigns.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+
+                select.addEventListener('change', (e) => {
+                    loadAllReports(e.target.value || null);
+                });
+
+                // Загружаем все отчеты при старте
+                loadAllReports(null);
+            } catch (error) {
+                console.error('Ошибка при загрузке сборов:', error);
+            }
+        }
+
+        async function loadAllReports(campaignId) {
+            const container = document.getElementById('reportsContainer');
+
+            try {
+                // Загружаем все кампании с их отчетами
+                const campaignsResponse = await fetch(`${API_BASE}/campaigns`);
+                const campaigns = await campaignsResponse.json();
+
+                // Фильтруем если выбран конкретный сбор
+                const filteredCampaigns = campaignId
+                    ? campaigns.filter(c => c.id === parseInt(campaignId))
+                    : campaigns;
+
+                // Загружаем отчеты для каждой кампании
+                const campaignsWithReports = await Promise.all(
+                    filteredCampaigns.map(async (campaign) => {
+                        try {
+                            const reportsResponse = await fetch(`${API_BASE}/reports/${campaign.id}`);
+                            const reportsData = await reportsResponse.json();
+                            return {
+                                ...campaign,
+                                reports: reportsData.reports || [],
+                                total_expenses: reportsData.total_expenses || 0
+                            };
+                        } catch {
+                            return { ...campaign, reports: [], total_expenses: 0 };
+                        }
+                    })
+                );
+
+                // Фильтруем только кампании с отчетами
+                const campaignsWithData = campaignsWithReports.filter(c => c.reports.length > 0);
+
+                if (campaignsWithData.length === 0) {
+                    container.innerHTML = `
+                        <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+                            <span class="material-symbols-outlined text-6xl mb-4">description</span>
+                            <p class="text-lg font-medium">Пока нет отчетов о расходах</p>
+                            <p class="text-sm mt-2">Отчеты появятся здесь после завершения сборов</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <h2 class="text-[#0d141b] dark:text-white text-xl font-bold leading-tight tracking-tight mb-6">
+                        Сборы и отчеты о расходах
+                    </h2>
+                    <div class="flex flex-col gap-6">
+                        ${campaignsWithData.map(campaign => renderCampaignCard(campaign)).join('')}
+                    </div>
+                `;
+
+                // Добавляем обработчики для разворачивания/сворачивания
+                attachToggleHandlers();
+
+            } catch (error) {
+                console.error('Ошибка при загрузке отчетов:', error);
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-16 text-red-400">
+                        <span class="material-symbols-outlined text-6xl mb-4">error</span>
+                        <p>Ошибка загрузки данных</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderCampaignCard(campaign) {
+            const progress = campaign.goal_amount > 0
+                ? Math.round((campaign.current_amount / campaign.goal_amount) * 100)
+                : 0;
+            const isCompleted = progress >= 100;
+
+            return `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm" data-campaign-id="${campaign.id}">
+                    <!-- Заголовок карточки -->
+                    <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-wrap justify-between items-start gap-4">
+                        <div class="flex-1 min-w-[200px]">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="px-2 py-0.5 rounded ${isCompleted ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'} text-[10px] font-bold uppercase tracking-wider">
+                                    ${isCompleted ? 'Завершен' : 'Активен'}
+                                </span>
+                                <span class="text-[#4c739a] dark:text-slate-400 text-xs font-medium">
+                                    ${campaign.reports.length} ${getReportWordForm(campaign.reports.length)}
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-bold text-[#0d141b] dark:text-white">${campaign.title}</h3>
+                            <p class="text-sm text-[#4c739a] dark:text-slate-400 mt-1">
+                                Цель: ${formatAmount(campaign.goal_amount)} • Собрано: ${formatAmount(campaign.current_amount)}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-black text-primary">${formatAmount(campaign.total_expenses)}</p>
+                            <p class="text-xs text-[#4c739a] font-medium uppercase tracking-wider">Потрачено</p>
+                        </div>
+                    </div>
+
+                    <!-- Раскрываемый блок с отчетами -->
+                    <div class="campaign-reports hidden" id="reports-${campaign.id}">
+                        <div class="p-6 space-y-6">
+                            <!-- Таблица расходов -->
+                            <div>
+                                <h4 class="text-sm font-bold uppercase text-[#4c739a] tracking-widest mb-4 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-lg">receipt_long</span>
+                                    Детализация расходов
+                                </h4>
+                                <div class="overflow-x-auto rounded-lg border border-slate-100 dark:border-slate-800">
+                                    <table class="w-full text-left text-sm">
+                                        <thead class="bg-slate-50 dark:bg-slate-800/50 text-[#4c739a]">
+                                            <tr>
+                                                <th class="px-4 py-3 font-semibold">Дата</th>
+                                                <th class="px-4 py-3 font-semibold">Описание</th>
+                                                <th class="px-4 py-3 font-semibold">Поставщик</th>
+                                                <th class="px-4 py-3 font-semibold text-right">Сумма</th>
+                                                <th class="px-4 py-3 font-semibold text-center">Документ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+                                            ${campaign.reports.map(report => `
+                                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                                                    <td class="px-4 py-3 dark:text-slate-300 whitespace-nowrap">${formatDate(report.expense_date)}</td>
+                                                    <td class="px-4 py-3 font-medium text-[#0d141b] dark:text-white">${report.description}</td>
+                                                    <td class="px-4 py-3 text-[#4c739a] dark:text-slate-400">${report.vendor_name || '—'}</td>
+                                                    <td class="px-4 py-3 text-right font-bold text-[#0d141b] dark:text-white whitespace-nowrap">${formatAmount(report.amount)}</td>
+                                                    <td class="px-4 py-3 text-center">
+                                                        ${report.receipt_url ? `
+                                                            <a href="${report.receipt_url}" target="_blank" class="inline-flex items-center gap-1 text-primary hover:underline text-xs">
+                                                                <span class="material-symbols-outlined text-sm">${getDocumentIcon(report.receipt_url)}</span>
+                                                                Открыть
+                                                            </a>
+                                                        ` : '<span class="text-slate-300">—</span>'}
+                                                    </td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                        <tfoot class="bg-slate-50 dark:bg-slate-800/50">
+                                            <tr>
+                                                <td class="px-4 py-3 font-bold text-right" colspan="3">Итого:</td>
+                                                <td class="px-4 py-3 text-right font-black text-primary">${formatAmount(campaign.total_expenses)}</td>
+                                                <td></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопка показать/скрыть -->
+                    <button class="w-full p-4 flex items-center justify-center gap-2 text-[#4c739a] hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-t border-slate-100 dark:border-slate-800 toggle-reports" data-target="reports-${campaign.id}">
+                        <span class="text-sm font-medium toggle-text">Показать детали</span>
+                        <span class="material-symbols-outlined toggle-icon">expand_more</span>
+                    </button>
+                </div>
+            `;
+        }
+
+        function getReportWordForm(count) {
+            const lastDigit = count % 10;
+            const lastTwoDigits = count % 100;
+
+            if (lastTwoDigits >= 11 && lastTwoDigits <= 19) return 'расходов';
+            if (lastDigit === 1) return 'расход';
+            if (lastDigit >= 2 && lastDigit <= 4) return 'расхода';
+            return 'расходов';
+        }
+
+        function attachToggleHandlers() {
+            document.querySelectorAll('.toggle-reports').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.dataset.target;
+                    const target = document.getElementById(targetId);
+                    const text = btn.querySelector('.toggle-text');
+                    const icon = btn.querySelector('.toggle-icon');
+
+                    if (target.classList.contains('hidden')) {
+                        target.classList.remove('hidden');
+                        text.textContent = 'Скрыть детали';
+                        icon.textContent = 'expand_less';
+                    } else {
+                        target.classList.add('hidden');
+                        text.textContent = 'Показать детали';
+                        icon.textContent = 'expand_more';
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCampaigns);
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>О фонде - Тепло Арктики</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark">
+    <header class="sticky top-0 z-50 w-full border-b border-[#e7edf3] dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 lg:px-20 py-3">
+        <div class="max-w-[1200px] mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="size-8 text-primary">
+                    <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h2 class="text-[#0d141b] dark:text-white text-xl font-black tracking-tight">Тепло Арктики</h2>
+            </div>
+            <nav class="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/">Главная</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/reports.html">Отчеты</a>
+                <a class="text-sm font-semibold text-primary transition-colors" href="/about.html">О нас</a>
+            </nav>
+            <div class="hidden md:block w-[100px]"></div>
+        </div>
+    </header>
+
+    <main class="max-w-[1200px] mx-auto px-4 lg:px-10 py-12">
+        <div class="mb-12">
+            <h1 class="text-4xl md:text-5xl font-black mb-4">О фонде "Тепло Арктики"</h1>
+            <p class="text-xl text-slate-600 dark:text-slate-400">
+                Прозрачность. Технологичность. Доверие.
+            </p>
+        </div>
+
+        <!-- Миссия -->
+        <section class="mb-16">
+            <div class="bg-primary/5 rounded-2xl p-8 md:p-12">
+                <h2 class="text-3xl font-black mb-6">Наша миссия</h2>
+                <p class="text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+                    Мы стремимся к процветанию арктических регионов и их жителей через максимально прозрачную
+                    благотворительность. Каждый донор имеет право знать, куда уходит каждый рубль его пожертвования.
+                    Именно поэтому мы создали первую в России платформу с отслеживанием всех транзакций в реальном времени.
+                </p>
+            </div>
+        </section>
+
+        <!-- Как это работает -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-black mb-8">Как это работает</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800">
+                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+                        <span class="material-symbols-outlined text-3xl">favorite</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">1. Вы жертвуете</h3>
+                    <p class="text-slate-600 dark:text-slate-400">
+                        Выбираете целевой сбор и делаете пожертвование удобным способом: картой, СБП или криптовалютой.
+                    </p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800">
+                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+                        <span class="material-symbols-outlined text-3xl">visibility</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">2. Отслеживаете</h3>
+                    <p class="text-slate-600 dark:text-slate-400">
+                        Ваше пожертвование мгновенно появляется в live-ленте. Вы видите, как растет общая сумма сбора.
+                    </p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800">
+                    <div class="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+                        <span class="material-symbols-outlined text-3xl">receipt_long</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">3. Проверяете</h3>
+                    <p class="text-slate-600 dark:text-slate-400">
+                        В отчетах видите, на что потрачены средства: чеки, даты, поставщики — всё прозрачно.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Принципы -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-black mb-8">Наши принципы</h2>
+            <div class="space-y-6">
+                <div class="bg-white dark:bg-slate-900 rounded-xl p-6 border-l-4 border-primary">
+                    <h3 class="text-xl font-bold mb-2">Прозрачность</h3>
+                    <p class="text-slate-600 dark:text-slate-400">
+                        Все транзакции отображаются в реальном времени. Каждый расход подтверждается документами.
+                    </p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 rounded-xl p-6 border-l-4 border-primary">
+                    <h3 class="text-xl font-bold mb-2">Технологичность</h3>
+                    <p class="text-slate-600 dark:text-slate-400">
+                        Мы используем современные технологии для обеспечения безопасности и прозрачности.
+                    </p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 rounded-xl p-6 border-l-4 border-primary">
+                    <h3 class="text-xl font-bold mb-2">Эффективность</h3>
+                    <p class="text-slate-600 dark:text-slate-400">
+                        Минимум административных расходов — максимум помощи тем, кто в ней нуждается.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контакты -->
+        <section>
+            <h2 class="text-3xl font-black mb-8">Контакты</h2>
+            <div class="bg-white dark:bg-slate-900 rounded-xl p-8 border border-slate-200 dark:border-slate-800">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="font-bold mb-4">Связь с нами</h3>
+                        <div class="space-y-3 text-slate-600 dark:text-slate-400">
+                            <p class="flex items-center gap-2">
+                                <span class="material-symbols-outlined">email</span>
+                                info@teplo-arctici.ru
+                            </p>
+                            <p class="flex items-center gap-2">
+                                <span class="material-symbols-outlined">phone</span>
+                                +7 (495) 123-45-67
+                            </p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold mb-4">Юридический адрес</h3>
+                        <p class="text-slate-600 dark:text-slate-400">
+                            Россия, г. Норильск<br/>
+                            ул. Арктическая, д. 1<br/>
+                            БФ "Тепло Арктики"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-20 border-t border-[#e7edf3] dark:border-slate-800 py-12 px-4 lg:px-20 bg-white dark:bg-slate-950">
+        <div class="max-w-[1200px] mx-auto text-center text-sm text-slate-500">
+            <p>© 2026 Тепло Арктики. Все права защищены.</p>
+        </div>
+    </footer>
+</body>
+</html>

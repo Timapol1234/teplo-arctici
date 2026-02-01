@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Админ-панель: Транзакции | Тепло Арктики</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#137fec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101922",
+          },
+          fontFamily: {
+            "display": ["Inter", "sans-serif"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed h-full">
+      <div class="p-6 flex flex-col h-full">
+        <div class="flex items-center gap-3 mb-10">
+          <div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white">
+            <span class="material-symbols-outlined">ac_unit</span>
+          </div>
+          <div class="flex flex-col">
+            <h1 class="text-[#0d141b] dark:text-white text-base font-bold leading-tight">Тепло Арктики</h1>
+            <p class="text-[#4c739a] dark:text-slate-400 text-xs font-normal leading-normal">Панель сотрудника</p>
+          </div>
+        </div>
+        <nav class="flex flex-col gap-1 flex-grow">
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors" href="/admin/dashboard.html">
+            <span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1">receipt_long</span>
+            <p class="text-sm font-bold">Транзакции</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/admin/campaigns.html">
+            <span class="material-symbols-outlined text-[22px]">volunteer_activism</span>
+            <p class="text-sm font-medium">Управление сборами</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/admin/reports.html">
+            <span class="material-symbols-outlined text-[22px]">description</span>
+            <p class="text-sm font-medium">Отчеты</p>
+          </a>
+          <div class="mt-auto">
+            <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#" data-logout>
+              <span class="material-symbols-outlined text-[22px]">logout</span>
+              <p class="text-sm font-medium">Выход</p>
+            </a>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 ml-72 p-8">
+      <div class="max-w-6xl mx-auto space-y-8">
+        <!-- Header -->
+        <div class="flex flex-wrap justify-between items-end gap-4">
+          <div class="flex flex-col gap-1">
+            <h2 class="text-[#0d141b] dark:text-white text-3xl font-black leading-tight tracking-tight">Управление транзакциями</h2>
+            <p class="text-[#4c739a] dark:text-slate-400 text-base font-normal">Мониторинг и управление всеми входящими благотворительными пожертвованиями в реальном времени.</p>
+          </div>
+          <div class="flex items-center gap-4 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-primary">
+              <span class="material-symbols-outlined">payments</span>
+            </div>
+            <div>
+              <p class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider">Всего собрано</p>
+              <p class="text-xl font-black text-slate-900 dark:text-white" id="total-amount">0 ₽</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Transaction Form -->
+        <section class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div class="border-b border-slate-100 dark:border-slate-800 p-6 bg-slate-50/50 dark:bg-slate-800/50">
+            <h3 class="text-[#0d141b] dark:text-white text-lg font-bold">Добавить транзакцию вручную</h3>
+            <p class="text-sm text-slate-500">Зарегистрируйте оффлайн пожертвование или демонстрационную запись.</p>
+          </div>
+          <div class="p-6">
+            <form id="donation-form" class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+              <div class="flex flex-col gap-2">
+                <label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold">Сумма (₽)</label>
+                <input id="amount" name="amount" class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary h-11 p-3 text-sm" placeholder="5000" type="number" required/>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold">Целевой сбор</label>
+                <select id="campaign" name="campaign_id" class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary h-11 px-3 text-sm" required>
+                  <option value="">Загрузка...</option>
+                </select>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="text-[#0d141b] dark:text-slate-200 text-sm font-semibold">Email донора</label>
+                <input id="donor-email" name="donor_email" class="w-full rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary h-11 p-3 text-sm" placeholder="example@mail.com" type="email"/>
+              </div>
+              <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 cursor-pointer py-3">
+                  <input id="anonymous" name="is_anonymous" class="rounded border-slate-300 dark:border-slate-600 text-primary focus:ring-primary" type="checkbox"/>
+                  <span class="text-xs font-medium text-slate-600 dark:text-slate-400">Анонимное пожертвование</span>
+                </label>
+                <button type="submit" class="flex-1 bg-primary hover:bg-primary/90 text-white font-bold py-2.5 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2">
+                  <span class="material-symbols-outlined text-sm">add</span>
+                  Добавить
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- Transactions List -->
+        <section class="space-y-4">
+          <div class="flex items-center justify-between px-2">
+            <h3 class="text-[#0d141b] dark:text-white text-xl font-bold">Последние движения средств</h3>
+            <div class="flex items-center gap-2">
+              <button id="export-btn" class="flex items-center gap-2 px-3 py-2 text-sm font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50">
+                <span class="material-symbols-outlined text-lg">download</span>
+                Экспорт CSV
+              </button>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+                  <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Дата</th>
+                  <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Донор</th>
+                  <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Сбор</th>
+                  <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Сумма</th>
+                  <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Статус</th>
+                  <th class="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Способ оплаты</th>
+                </tr>
+              </thead>
+              <tbody id="donations-table" class="divide-y divide-slate-100 dark:divide-slate-800">
+                <tr>
+                  <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+                    <div class="flex flex-col items-center gap-2">
+                      <span class="material-symbols-outlined text-4xl">hourglass_empty</span>
+                      <p>Загрузка транзакций...</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div id="pagination" class="px-6 py-4 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800">
+              <span id="pagination-info" class="text-xs text-slate-500 font-medium">Загрузка...</span>
+              <div id="pagination-controls" class="flex gap-1"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Info Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-primary/5 border border-primary/10 rounded-xl p-6 flex gap-4">
+            <div class="bg-primary rounded-lg p-3 h-fit text-white">
+              <span class="material-symbols-outlined">security</span>
+            </div>
+            <div>
+              <h4 class="text-[#0d141b] dark:text-white font-bold mb-1">Журнал прозрачности</h4>
+              <p class="text-sm text-[#4c739a] dark:text-slate-400 leading-relaxed">Все транзакции фиксируются в нашем публичном реестре. Это поддерживает доверие доноров и гарантирует подотчетность каждого рубля.</p>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 flex gap-4 shadow-sm">
+            <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 h-fit text-slate-600 dark:text-slate-400">
+              <span class="material-symbols-outlined">help</span>
+            </div>
+            <div>
+              <h4 class="text-[#0d141b] dark:text-white font-bold mb-1">Нужна помощь?</h4>
+              <p class="text-sm text-[#4c739a] dark:text-slate-400 leading-relaxed">Возникли проблемы с ручным вводом? Свяжитесь с техподдержкой или изучите документацию по протоколам транзакций.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/admin.js?v=6"></script>
+  <script>
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 50;
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Проверка что AdminAPI загружен
+      if (!window.AdminAPI) {
+        console.error('❌ AdminAPI не загружен!');
+        alert('Ошибка загрузки админ-панели. Обновите страницу.');
+        return;
+      }
+      // Проверка авторизации
+      const isAuth = await checkAuth();
+      if (!isAuth) return;
+
+      // Инициализация UI элементов
+      initLogout();
+      initThemeToggle();
+
+      // Загрузка данных
+      await loadCampaigns();
+      await loadDonations();
+      await loadStatistics();
+
+      // Обработчик формы добавления
+      document.getElementById('donation-form').addEventListener('submit', handleDonationSubmit);
+
+      // Обработчик экспорта
+      document.getElementById('export-btn').addEventListener('click', exportToCSV);
+
+      // Обработчик чекбокса анонимности
+      document.getElementById('anonymous').addEventListener('change', (e) => {
+        const emailInput = document.getElementById('donor-email');
+        if (e.target.checked) {
+          emailInput.value = '';
+          emailInput.disabled = true;
+          emailInput.required = false;
+        } else {
+          emailInput.disabled = false;
+        }
+      });
+    });
+
+    // Загрузка списка сборов для селекта
+    async function loadCampaigns() {
+      try {
+        const campaigns = await AdminAPI.getCampaigns();
+        const select = document.getElementById('campaign');
+
+        select.innerHTML = '<option value="">Выберите сбор</option>' +
+          campaigns.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+      } catch (error) {
+        UI.showError('Ошибка загрузки сборов: ' + error.message);
+      }
+    }
+
+    // Загрузка транзакций
+    async function loadDonations(page = 1) {
+      try {
+        const data = await AdminAPI.getDonations(page, ITEMS_PER_PAGE);
+        currentPage = page;
+
+        renderDonations(data.donations);
+        renderPagination(data.pagination);
+      } catch (error) {
+        UI.showError('Ошибка загрузки транзакций: ' + error.message);
+        document.getElementById('donations-table').innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-red-500">
+              <div class="flex flex-col items-center gap-2">
+                <span class="material-symbols-outlined text-4xl">error</span>
+                <p>Ошибка загрузки данных</p>
+              </div>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // Отображение транзакций
+    function renderDonations(donations) {
+      const tbody = document.getElementById('donations-table');
+
+      if (donations.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-slate-500">
+              <div class="flex flex-col items-center gap-2">
+                <span class="material-symbols-outlined text-4xl">inbox</span>
+                <p>Нет транзакций</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = donations.map(d => {
+        const date = new Date(d.created_at);
+        const dateStr = UI.formatDate(d.created_at);
+        const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+        const donorDisplay = d.is_anonymous
+          ? '<div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400"><span class="material-symbols-outlined text-lg">visibility_off</span></div><span class="text-sm italic text-slate-400">Анонимный донор</span></div>'
+          : `<div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500"><span class="material-symbols-outlined text-lg">person</span></div><span class="text-sm text-slate-700 dark:text-slate-300">${d.donor_email || 'Не указан'}</span></div>`;
+
+        const paymentMethod = d.payment_method === 'manual' ? 'Ручной ввод' :
+                             d.payment_method === 'card' ? 'Банковская карта' :
+                             d.payment_method === 'yookassa' ? 'ЮKassa' : d.payment_method;
+
+        return `
+          <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+            <td class="px-6 py-4">
+              <div class="flex flex-col">
+                <span class="text-sm font-semibold text-slate-900 dark:text-white">${dateStr}</span>
+                <span class="text-xs text-slate-500">${timeStr}</span>
+              </div>
+            </td>
+            <td class="px-6 py-4">${donorDisplay}</td>
+            <td class="px-6 py-4">
+              <span class="inline-flex px-2 py-1 rounded-md bg-primary/5 text-primary text-xs font-bold">${d.campaign}</span>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <span class="text-sm font-black text-slate-900 dark:text-white">${UI.formatAmount(d.amount)}</span>
+            </td>
+            <td class="px-6 py-4">${UI.getStatusBadge(d.status)}</td>
+            <td class="px-6 py-4">
+              <span class="text-xs text-slate-600 dark:text-slate-400">${paymentMethod}</span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Отображение пагинации
+    function renderPagination(pagination) {
+      const info = document.getElementById('pagination-info');
+      const controls = document.getElementById('pagination-controls');
+
+      const start = (pagination.page - 1) * pagination.limit + 1;
+      const end = Math.min(pagination.page * pagination.limit, pagination.total);
+
+      info.textContent = `Показано ${start}-${end} из ${pagination.total} транзакций`;
+
+      let html = `
+        <button data-page="${pagination.page - 1}"
+                class="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 transition-colors"
+                ${pagination.page === 1 ? 'disabled' : ''}>
+          <span class="material-symbols-outlined text-lg">chevron_left</span>
+        </button>
+      `;
+
+      for (let i = 1; i <= pagination.pages; i++) {
+        if (i === 1 || i === pagination.pages || (i >= pagination.page - 1 && i <= pagination.page + 1)) {
+          html += `
+            <button data-page="${i}"
+                    class="px-3 py-1 rounded text-xs font-bold ${i === pagination.page ? 'bg-primary text-white' : 'hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400'}">
+              ${i}
+            </button>
+          `;
+        } else if (i === pagination.page - 2 || i === pagination.page + 2) {
+          html += '<span class="px-2 text-slate-400">...</span>';
+        }
+      }
+
+      html += `
+        <button data-page="${pagination.page + 1}"
+                class="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 transition-colors"
+                ${pagination.page === pagination.pages ? 'disabled' : ''}>
+          <span class="material-symbols-outlined text-lg">chevron_right</span>
+        </button>
+      `;
+
+      controls.innerHTML = html;
+
+      // Привязываем обработчики пагинации
+      controls.querySelectorAll('[data-page]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const page = parseInt(btn.dataset.page);
+          if (!btn.disabled && page >= 1) {
+            loadDonations(page);
+          }
+        });
+      });
+    }
+
+    // Загрузка статистики
+    async function loadStatistics() {
+      try {
+        const response = await fetch('/api/donations/statistics');
+        const stats = await response.json();
+        document.getElementById('total-amount').textContent = UI.formatAmount(stats.total_amount);
+      } catch (error) {
+        console.error('Ошибка загрузки статистики:', error);
+      }
+    }
+
+    // Обработка отправки формы
+    async function handleDonationSubmit(e) {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = {
+        amount: parseFloat(formData.get('amount')),
+        campaign_id: parseInt(formData.get('campaign_id')),
+        donor_email: formData.get('donor_email'),
+        is_anonymous: formData.get('is_anonymous') === 'on',
+        payment_method: 'manual'
+      };
+
+      if (!data.campaign_id) {
+        UI.showError('Выберите целевой сбор');
+        return;
+      }
+
+      if (!data.is_anonymous && !data.donor_email) {
+        UI.showError('Укажите email донора или отметьте пожертвование как анонимное');
+        return;
+      }
+
+      try {
+        await AdminAPI.createDonation(data);
+        UI.showNotification('Транзакция успешно добавлена');
+        e.target.reset();
+        await loadDonations(currentPage);
+        await loadStatistics();
+      } catch (error) {
+        UI.showError('Ошибка добавления транзакции: ' + error.message);
+      }
+    }
+
+    // Экспорт в CSV
+    async function exportToCSV() {
+      try {
+        const data = await AdminAPI.getDonations(1, 10000);
+        const csv = [
+          ['Дата', 'Email донора', 'Сбор', 'Сумма', 'Статус', 'Способ оплаты'].join(','),
+          ...data.donations.map(d => [
+            new Date(d.created_at).toLocaleString('ru-RU'),
+            d.is_anonymous ? 'Анонимный' : (d.donor_email || 'Не указан'),
+            d.campaign,
+            d.amount,
+            d.status,
+            d.payment_method
+          ].join(','))
+        ].join('\n');
+
+        const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+
+        UI.showNotification('Файл успешно экспортирован');
+      } catch (error) {
+        UI.showError('Ошибка экспорта: ' + error.message);
+      }
+    }
+  </script>
+</body>
+</html>

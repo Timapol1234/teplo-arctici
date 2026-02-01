@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Тепло Арктики - Прозрачная Благотворительность</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Арктические декоративные элементы - на всю страницу */
+        .arctic-decor {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .arctic-bg-image {
+            position: absolute;
+            inset: 0;
+            background-image: url("https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            opacity: 0.08;
+        }
+        .dark .arctic-bg-image {
+            opacity: 0.1;
+        }
+
+        .snowflake {
+            position: absolute;
+            color: rgba(19, 127, 236, 0.15);
+            pointer-events: none;
+            animation: drift 6s ease-in-out infinite;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(19, 127, 236, 0.3);
+        }
+        .dark .snowflake {
+            color: rgba(255, 255, 255, 0.12);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        .snowflake:nth-child(2) { animation-delay: -1s; animation-duration: 7s; }
+        .snowflake:nth-child(3) { animation-delay: -2s; animation-duration: 5s; }
+        .snowflake:nth-child(4) { animation-delay: -3s; animation-duration: 8s; }
+        .snowflake:nth-child(5) { animation-delay: -4s; animation-duration: 6s; }
+        .snowflake:nth-child(6) { animation-delay: -0.5s; animation-duration: 7.5s; }
+        .snowflake:nth-child(7) { animation-delay: -2.5s; animation-duration: 5.5s; }
+        .snowflake:nth-child(8) { animation-delay: -3.5s; animation-duration: 6.5s; }
+        .snowflake:nth-child(9) { animation-delay: -1.5s; animation-duration: 6.8s; }
+        .snowflake:nth-child(10) { animation-delay: -4.5s; animation-duration: 5.8s; }
+        .snowflake:nth-child(11) { animation-delay: -2.8s; animation-duration: 7.2s; }
+        .snowflake:nth-child(12) { animation-delay: -3.8s; animation-duration: 6.2s; }
+
+        @keyframes drift {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(20deg); }
+        }
+
+        .aurora {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(19, 127, 236, 0.08) 20%,
+                rgba(16, 185, 129, 0.06) 40%,
+                rgba(59, 130, 246, 0.07) 60%,
+                rgba(14, 165, 233, 0.05) 80%,
+                transparent 100%
+            );
+            animation: aurora-shift 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .dark .aurora {
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(19, 127, 236, 0.12) 20%,
+                rgba(16, 185, 129, 0.08) 40%,
+                rgba(59, 130, 246, 0.1) 60%,
+                rgba(14, 165, 233, 0.07) 80%,
+                transparent 100%
+            );
+        }
+
+        @keyframes aurora-shift {
+            0%, 100% {
+                opacity: 0.5;
+                transform: translateX(-3%) translateY(-2%) scale(1);
+            }
+            33% {
+                opacity: 0.7;
+                transform: translateX(3%) translateY(2%) scale(1.02);
+            }
+            66% {
+                opacity: 0.6;
+                transform: translateX(-2%) translateY(1%) scale(1.01);
+            }
+        }
+
+        .ice-crystals {
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0v80M0 40h80M40 40l28.28-28.28M40 40l-28.28 28.28M40 40l28.28 28.28M40 40l-28.28-28.28' stroke='rgba(19,127,236,0.04)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+            background-size: 80px 80px;
+            pointer-events: none;
+        }
+        .dark .ice-crystals {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0v80M0 40h80M40 40l28.28-28.28M40 40l-28.28 28.28M40 40l28.28 28.28M40 40l-28.28-28.28' stroke='rgba(255,255,255,0.03)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-100 transition-colors duration-200">
+    <!-- Арктические декоративные элементы на всю страницу -->
+    <div class="arctic-decor">
+        <div class="arctic-bg-image"></div>
+        <div class="aurora"></div>
+        <div class="ice-crystals"></div>
+        <span class="snowflake" style="top: 5%; left: 3%;">❄</span>
+        <span class="snowflake" style="top: 12%; right: 8%;">❅</span>
+        <span class="snowflake" style="top: 25%; left: 10%;">❆</span>
+        <span class="snowflake" style="top: 18%; right: 15%;">❄</span>
+        <span class="snowflake" style="top: 40%; left: 5%;">❅</span>
+        <span class="snowflake" style="top: 35%; right: 4%;">❆</span>
+        <span class="snowflake" style="top: 55%; left: 8%;">❄</span>
+        <span class="snowflake" style="top: 50%; right: 12%;">❅</span>
+        <span class="snowflake" style="top: 70%; left: 4%;">❆</span>
+        <span class="snowflake" style="top: 65%; right: 6%;">❄</span>
+        <span class="snowflake" style="top: 85%; left: 12%;">❅</span>
+        <span class="snowflake" style="top: 80%; right: 10%;">❆</span>
+    </div>
+
+    <header class="sticky top-0 z-50 w-full border-b border-solid border-[#e7edf3] dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 lg:px-20 py-3">
+        <div class="max-w-[1200px] mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="size-8 text-primary">
+                    <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <h2 class="text-[#0d141b] dark:text-white text-xl font-black tracking-tight">Тепло Арктики</h2>
+            </div>
+            <nav class="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/">Главная</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/reports.html">Отчеты</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/about.html">О нас</a>
+            </nav>
+            <button class="md:hidden p-2" id="mobileMenuBtn">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="hidden md:block w-[100px]"></div>
+        </div>
+    </header>
+
+    <main class="max-w-[1200px] mx-auto px-4 lg:px-10 py-8">
+        <!-- Hero Section -->
+        <section class="mb-12">
+            <div class="@container">
+                <div class="relative overflow-hidden rounded-xl bg-slate-900 min-h-[520px] flex flex-col items-center justify-center p-8 text-center" style='background-image: linear-gradient(rgba(19, 127, 236, 0.4) 0%, rgba(16, 25, 34, 0.9) 100%), url("https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1200"); background-size: cover; background-position: center;'>
+                    <div class="max-w-3xl flex flex-col gap-6">
+                        <h1 class="text-white text-4xl md:text-6xl font-black leading-tight tracking-tight">
+                            Прозрачность в реальном времени
+                        </h1>
+                        <p class="text-white/80 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+                            Первый благотворительный фонд с 100% отслеживанием финансов в прямом эфире.
+                            Каждый рубль под вашим контролем.
+                        </p>
+                        <div class="flex flex-wrap justify-center gap-4 mt-4">
+                            <a href="#campaigns-section" class="min-w-[180px] h-14 rounded-lg bg-primary text-white text-lg font-bold shadow-xl shadow-primary/30 hover:scale-105 transition-transform flex items-center justify-center">
+                                Помочь сейчас
+                            </a>
+                            <a href="/about.html" class="min-w-[180px] h-14 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 text-white text-lg font-bold hover:bg-white/20 transition-all flex items-center justify-center">
+                                Как это работает
+                            </a>
+                        </div>
+                    </div>
+                    <div class="mt-12 w-full grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl" id="heroStats">
+                        <!-- Статистика загружается из API -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="flex flex-col lg:flex-row gap-10">
+            <!-- Campaigns Section -->
+            <div class="flex-1" id="campaigns-section">
+                <div class="flex items-center justify-between mb-6 px-2">
+                    <h2 class="text-2xl font-bold tracking-tight">Активные сборы</h2>
+                    <a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#all-campaigns">
+                        Смотреть все <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="campaignsList">
+                    <!-- Сборы загружаются из API -->
+                </div>
+            </div>
+
+            <!-- Live Feed Section -->
+            <aside class="w-full lg:w-[380px]">
+                <div class="bg-white dark:bg-slate-900 rounded-xl border border-[#e7edf3] dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="p-5 border-b border-[#e7edf3] dark:border-slate-800 flex items-center justify-between">
+                        <h2 class="text-lg font-bold flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                            Live-лента
+                        </h2>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Прямо сейчас</span>
+                    </div>
+                    <div class="flex flex-col p-4 max-h-[500px] overflow-y-auto" id="liveFeed">
+                        <!-- Live-лента загружается из API -->
+                    </div>
+                    <button class="w-full py-4 text-sm font-bold text-slate-500 hover:text-primary transition-colors border-t border-[#e7edf3] dark:border-slate-800">
+                        Смотреть всю историю транзакций
+                    </button>
+                </div>
+
+                <div class="mt-6 p-6 rounded-xl bg-primary/5 border border-primary/10 flex items-start gap-4">
+                    <span class="material-symbols-outlined text-primary text-3xl">verified_user</span>
+                    <div>
+                        <h4 class="text-sm font-bold mb-1">Проверено Системой</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Каждая транзакция записывается в системе для обеспечения полной прозрачности.
+                        </p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="mt-20 border-t border-[#e7edf3] dark:border-slate-800 py-12 px-4 lg:px-20 bg-white dark:bg-slate-950">
+        <div class="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="col-span-1 md:col-span-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="size-6 text-primary">
+                        <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-[#0d141b] dark:text-white text-lg font-black tracking-tight">Тепло Арктики</h2>
+                </div>
+                <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Благотворительный фонд, стремящийся к процветанию арктических регионов и их жителей.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Навигация</h4>
+                <ul class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <li><a class="hover:text-primary" href="/">Главная</a></li>
+                    <li><a class="hover:text-primary" href="/reports.html">Отчеты</a></li>
+                    <li><a class="hover:text-primary" href="/about.html">О нас</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Прозрачность</h4>
+                <ul class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <li><a class="hover:text-primary" href="#">Проверка транзакций</a></li>
+                    <li><a class="hover:text-primary" href="/reports.html">Финансовая отчетность</a></li>
+                    <li><a class="hover:text-primary" href="/about.html">О фонде</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Связь</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Email: info@teplo-arctici.ru</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Телефон: +7 (495) 123-45-67</p>
+            </div>
+        </div>
+        <div class="max-w-[1200px] mx-auto mt-12 pt-8 border-t border-slate-100 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+            <p>© 2026 Тепло Арктики. Все права защищены.</p>
+            <div class="flex gap-6">
+                <a class="hover:text-primary" href="/privacy.html">Политика конфиденциальности</a>
+                <a class="hover:text-primary" href="/terms.html">Условия использования</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальное окно пожертвования -->
+    <div id="donation-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <!-- Заголовок -->
+            <div class="bg-primary p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium">Пожертвование на сбор</p>
+                        <h3 id="modal-campaign-title" class="text-xl font-bold mt-1">Название сбора</h3>
+                    </div>
+                    <button id="close-donation-modal" class="p-2 hover:bg-white/20 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Форма -->
+            <form id="donation-form" class="p-6 space-y-5">
+                <!-- Сумма -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Сумма пожертвования</label>
+                    <div class="relative">
+                        <input
+                            type="number"
+                            name="amount"
+                            id="donation-amount"
+                            min="100"
+                            required
+                            class="w-full h-14 pl-4 pr-12 text-2xl font-bold rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-0 outline-none"
+                            placeholder="500"
+                        />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-bold text-slate-400">₽</span>
+                    </div>
+                    <div class="flex gap-2 mt-3" id="amount-presets">
+                        <button type="button" data-amount="100" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">100₽</button>
+                        <button type="button" data-amount="500" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">500₽</button>
+                        <button type="button" data-amount="1000" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">1000₽</button>
+                        <button type="button" data-amount="5000" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">5000₽</button>
+                    </div>
+                </div>
+
+                <!-- Анонимность -->
+                <label class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl cursor-pointer">
+                    <input
+                        type="checkbox"
+                        name="is_anonymous"
+                        id="is-anonymous"
+                        class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
+                    />
+                    <div>
+                        <p class="font-semibold text-sm">Анонимное пожертвование</p>
+                        <p class="text-xs text-slate-500">Ваше имя не будет отображаться в ленте</p>
+                    </div>
+                </label>
+
+                <!-- Имя -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Ваше имя (необязательно)</label>
+                    <input
+                        type="text"
+                        name="donor_name"
+                        id="donor-name"
+                        class="w-full h-12 px-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-0 outline-none"
+                        placeholder="Иван Иванов"
+                    />
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Email (необязательно)</label>
+                    <input
+                        type="email"
+                        name="donor_email"
+                        id="donor-email"
+                        class="w-full h-12 px-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-0 outline-none"
+                        placeholder="email@example.com"
+                    />
+                    <p class="text-xs text-slate-500 mt-1">Для получения благодарности и отчёта</p>
+                </div>
+
+                <!-- Сообщения об ошибках/успехе -->
+                <div id="donation-error" class="hidden p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm"></div>
+                <div id="donation-success" class="hidden p-4 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-xl"></div>
+
+                <!-- Кнопка -->
+                <button
+                    type="submit"
+                    class="w-full h-14 bg-primary hover:bg-primary/90 text-white text-lg font-bold rounded-xl shadow-lg shadow-primary/30 transition-all"
+                >
+                    Пожертвовать
+                </button>
+
+                <p class="text-xs text-center text-slate-400">
+                    Нажимая кнопку, вы соглашаетесь с условиями использования
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/liveFeed.js"></script>
+</body>
+</html>

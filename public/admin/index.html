@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Вход в админ-панель - Тепло Арктики</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center">
+    <div class="w-full max-w-md p-8">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 border border-slate-200 dark:border-slate-800">
+            <div class="text-center mb-8">
+                <div class="size-16 mx-auto rounded-full bg-primary flex items-center justify-center text-white mb-4">
+                    <span class="material-symbols-outlined text-4xl">ac_unit</span>
+                </div>
+                <h1 class="text-2xl font-black text-slate-900 dark:text-white">Тепло Арктики</h1>
+                <p class="text-sm text-slate-500 mt-1">Панель администратора</p>
+            </div>
+
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Email</label>
+                    <input
+                        type="email"
+                        id="email"
+                        required
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                        placeholder="admin@teplo-arctici.ru"
+                    />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Пароль</label>
+                    <input
+                        type="password"
+                        id="password"
+                        required
+                        class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary"
+                        placeholder="••••••••"
+                    />
+                </div>
+
+                <div id="error" class="hidden bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-primary/20"
+                >
+                    Войти
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <a href="/" class="text-sm text-slate-500 hover:text-primary">← Вернуться на главную</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        // Проверка, если пользователь уже авторизован
+        async function checkExistingAuth() {
+            const token = localStorage.getItem('admin_token');
+            if (token) {
+                try {
+                    const response = await fetch(`${API_BASE}/admin/verify`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    if (response.ok) {
+                        window.location.href = '/admin/dashboard.html';
+                    }
+                } catch (error) {
+                    // Токен недействителен, продолжаем показывать форму входа
+                    localStorage.removeItem('admin_token');
+                    localStorage.removeItem('admin_data');
+                }
+            }
+        }
+
+        // Проверяем при загрузке страницы
+        checkExistingAuth();
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+
+            errorDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Ошибка авторизации');
+                }
+
+                // Сохраняем токен
+                localStorage.setItem('admin_token', data.token);
+                localStorage.setItem('admin_data', JSON.stringify(data.admin));
+
+                // Перенаправляем в админ-панель
+                window.location.href = '/admin/dashboard.html';
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

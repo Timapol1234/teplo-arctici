@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Отчеты о расходах - Тепло Арктики</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-50 min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf3] dark:border-b-slate-800 bg-white dark:bg-background-dark px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-[#0d141b] dark:text-slate-50">
+<div class="size-6 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Тепло Арктики</h2>
+</div>
+<nav class="flex items-center gap-9">
+<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Главная</a>
+<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Миссии</a>
+<a class="text-sm font-medium leading-normal text-primary" href="#">Отчеты</a>
+<a class="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">О нас</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-[#4c739a] flex border-none bg-[#e7edf3] dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-[#e7edf3] dark:bg-slate-800 text-[#0d141b] dark:text-slate-50 focus:ring-0 h-full placeholder:text-[#4c739a] px-4 rounded-r-lg text-sm" placeholder="Поиск отчетов..." value=""/>
+</div>
+</label>
+<button class="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal transition-opacity hover:opacity-90">
+<span>Помочь сейчас</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-slate-200 dark:border-slate-700" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLozz28650bSM4Oal-6AZ2p4a-VcJarHYMp9As-dOfv-TUFvKhkDqadehExwLr-PNO0EJyc67PQKkcd9aQMRt2sJTY3t5IomYo6wtnlNOjl2B9XqgjJIk2JtNYFqXlF-L6TbI2NvVNM_bViH-9AGT7vukFBm6-VwIgHTJAM97_VtjAaqqroDo8vmQd6NX8zeDqqzvSzUMjtoXUb9zZJwqdULyllslngFTZEWL4OdVDMvq33vJLyKWP1bGhccEYeTHzG8HjpN-dKOsg");'></div>
+</div>
+</header>
+<main class="flex flex-1 justify-center py-8">
+<div class="layout-content-container flex flex-col max-w-[1024px] flex-1 px-4">
+<div class="flex flex-wrap justify-between items-end gap-4 p-4 mb-4">
+<div class="flex min-w-72 flex-col gap-2">
+<h1 class="text-[#0d141b] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Отчеты о расходах</h1>
+<p class="text-[#4c739a] dark:text-slate-400 text-base font-normal">Прозрачная отчетность в реальном времени и подтверждение каждого рубля, потраченного на миссии в Арктике.</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-sm">download</span>
+<span class="text-sm font-medium text-[#0d141b] dark:text-white">Скачать PDF отчет</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-4 px-4 py-4 bg-white dark:bg-background-dark/50 rounded-xl border border-slate-100 dark:border-slate-800 shadow-sm mb-8">
+<div class="flex items-center justify-between">
+<div class="flex gap-4 items-center">
+<span class="text-sm font-semibold text-[#4c739a]">Фильтры:</span>
+<div class="flex gap-2 flex-wrap">
+<div class="relative">
+<button class="flex h-9 items-center gap-x-2 rounded-lg bg-primary text-white px-4">
+<span class="text-sm font-medium">Проект</span>
+<span class="material-symbols-outlined text-lg">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="relative">
+<button class="flex h-9 items-center gap-x-2 rounded-lg bg-[#e7edf3] dark:bg-slate-800 px-4 text-[#0d141b] dark:text-slate-300">
+<span class="text-sm font-medium">Дата</span>
+<span class="material-symbols-outlined text-lg">calendar_today</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex gap-3 border-l border-slate-200 dark:border-slate-700 pl-4">
+<button class="p-2 text-[#0d141b] dark:text-slate-300 hover:bg-[#e7edf3] dark:hover:bg-slate-800 rounded-lg" title="Сортировка">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</div>
+</div>
+<h2 class="text-[#0d141b] dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-4">Завершенные сборы и отчеты</h2>
+<div class="flex flex-col gap-6 px-4">
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+<div class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] font-bold uppercase tracking-wider">Завершено</span>
+<span class="text-[#4c739a] dark:text-slate-400 text-xs font-medium">Миссия #AR-2024-08</span>
+</div>
+<h3 class="text-xl font-bold text-[#0d141b] dark:text-white">Зимняя одежда для детского дома в Норильске</h3>
+<p class="text-sm text-[#4c739a] dark:text-slate-400 mt-1">Цель: 450,000₽ • Дата доставки: 12 нояб. 2024</p>
+</div>
+<div class="text-right">
+<p class="text-2xl font-black text-primary">450,000₽</p>
+<p class="text-xs text-[#4c739a] font-medium uppercase tracking-tighter">Сбор завершен</p>
+</div>
+</div>
+<div class="p-6 space-y-8">
+<div>
+<h4 class="text-sm font-bold uppercase text-[#4c739a] tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">receipt_long</span> Целевое использование средств
+                                </h4>
+<div class="overflow-x-auto rounded-lg border border-slate-100 dark:border-slate-800">
+<table class="w-full text-left text-sm">
+<thead class="bg-slate-50 dark:bg-slate-800/50 text-[#4c739a]">
+<tr>
+<th class="px-4 py-3 font-semibold">Дата покупки</th>
+<th class="px-4 py-3 font-semibold">Описание</th>
+<th class="px-4 py-3 font-semibold text-right">Сумма</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50 dark:divide-slate-800">
+<tr>
+<td class="px-4 py-3 dark:text-slate-300">08.11.2024</td>
+<td class="px-4 py-3 font-medium">Арктические термоботинки (60 пар)</td>
+<td class="px-4 py-3 text-right font-bold text-[#0d141b] dark:text-white">280,000₽</td>
+</tr>
+<tr>
+<td class="px-4 py-3 dark:text-slate-300">09.11.2024</td>
+<td class="px-4 py-3 font-medium">Тяжелые зимние куртки (60 шт.)</td>
+<td class="px-4 py-3 text-right font-bold text-[#0d141b] dark:text-white">145,000₽</td>
+</tr>
+<tr>
+<td class="px-4 py-3 dark:text-slate-300">11.11.2024</td>
+<td class="px-4 py-3 font-medium">Логистика и доставка (Авиа Норильск)</td>
+<td class="px-4 py-3 text-right font-bold text-[#0d141b] dark:text-white">25,000₽</td>
+</tr>
+</tbody>
+<tfoot class="bg-slate-50 dark:bg-slate-800/50">
+<tr>
+<td class="px-4 py-3 font-bold text-right" colspan="2">Итого потрачено:</td>
+<td class="px-4 py-3 text-right font-black text-primary">450,000₽</td>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase text-[#4c739a] tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">description</span> Чеки
+                                </h4>
+<div class="flex gap-4">
+<div class="relative group cursor-pointer">
+<div class="w-32 h-40 bg-slate-200 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+<div class="w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC8fV8puQP6jMvU9KCUJsCT-pthRBNnhOQH1FSxoQ5nNh5svOGJz1MV4IV9s9M-XHymYEEs38XEG6LOxI_gkQxry4ZY6571Ops7E3o2fdrl4lp6fFLcyuFpwWL7evQ-ewFedAye6PVDdQpvXnIGdbi_zKawCJMNmpR2MjCbHF3tO9J1thBvcE3Qnnhxfx6V7ffeM2NwDrm1KIn6B-2p8bO1iOcBz1BrOjMprpezoaKlTqER2PTjSx2YXlOIm9URzg_zrbHgOdvsdjMe');"></div>
+</div>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+<span class="material-symbols-outlined text-white">zoom_in</span>
+</div>
+<p class="text-[10px] text-center mt-1 text-[#4c739a]">Чек_0811.jpg</p>
+</div>
+<div class="relative group cursor-pointer">
+<div class="w-32 h-40 bg-slate-200 dark:bg-slate-800 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+<div class="w-full h-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCKcaCcXnGoHmykubK8UxbwID681LQU8sf3lzWyFPfpFnExM6k0cqgDv1kGJEWfh4ApG0V4IisuVAmHflOjWr7LozOH_pRMGfLIdtCKqVY46CelEN9zlJg0_3jP2tD9By1GPhYWX423Lez5T3RNWAI7pTsBt6uyplg5WQKza6zTNPFFs_isbgLCaO_TMrWXuKXDBtKKBQDRbKd1Y_S6RmiP9ft03BfrS6yCQiGFIagQMkKv4keJBY6MQ1MZo8QM9wBZd_yqPjYgWn8Q');"></div>
+</div>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-lg">
+<span class="material-symbols-outlined text-white">zoom_in</span>
+</div>
+<p class="text-[10px] text-center mt-1 text-[#4c739a]">Накладная_1111.pdf</p>
+</div>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase text-[#4c739a] tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">photo_library</span> Фото/Видео отчет
+                                </h4>
+<div class="grid grid-cols-4 gap-4">
+<div class="aspect-square rounded-lg bg-slate-200 dark:bg-slate-800 overflow-hidden" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQoWiKXodDaM1xaUxxqeEBumBJpsXp4y58xjEYdQoCtqjr6nCFjqpBNRJwuvFfaaPPVcbbhSNjGhmv7nqzU64LzAz_BK5v9nGiWiVoiI2cmEnnqRkUitBGDsAZ8wDOUcf4CzmWK4G8ir5QAMVjYJloh7y2FY8fRW2D6OdlnBsWXyTttURui2slCSOtIgqeVYpAEViECu6DTcapfFFSZXDPS1GuxViRMMUBo_1LxG2EV4vechXQk8bByYKCFUMdgOiEr0Ai3j-NXfjF'); background-size: cover;"></div>
+<div class="aspect-square rounded-lg bg-slate-200 dark:bg-slate-800 overflow-hidden" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD_se7ets8MEyVB7ROs4r2HvItDo8mVp7se8y4tcH5wTkKICAmE74JFkDLHuGOgpTVSrh9XRjbZXDTkTwnr4c80yRH8WD4_0Qh9fNiop-sNnhDWJGfqExHFPIdTQi_E8QaMg05L8rzX-3824s6o3a8TO4DUPmzi76MphtsAoFuVkl-KjkLZsZuGYi7lbdxBLKVxZe2dtKZtAbnFQoe22F3eWV3-pMfiNkXKMjB4BzDLaRGQWaBcXArD9ijo2VWrKfB-RrnbfWJHxZHD'); background-size: cover;"></div>
+<div class="aspect-square rounded-lg bg-slate-200 dark:bg-slate-800 overflow-hidden" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-jkJko6LrQH6hD-XvE0i4Xi0QvTjenPes_-8_KuX4WKv3MdPVasSDA-b4Q9ZIBYaQg6cX322aM7fWqOy5JUd5zd-7NI80iFkDzsbgYf_r33sReYnD8_4n2AxCjI8FWBqSWrj69IKtLslpksX4Oj2j_47dqqqHAapZEPqdhU9_HHR75bvb9xrQoMNwcl-6wj9hf4lZePrEjYy7_f87eRg7TlYAq4FCf9XMF6opIOVhYgxPJ8ZSpGqCZHrtUkKJ0-D316fJm2lcfuFZ'); background-size: cover;"></div>
+<div class="aspect-square rounded-lg bg-slate-200 dark:bg-slate-800 overflow-hidden relative flex items-center justify-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3AD4mg0I5kVtZ9s-UkcdA8C5dQyvgAAbw9Z0VQpOTBu4H3I69CEyWGBBAASM7hXGL2-PBG0zNm4P22GHo7jdUWeqECQLfnD58fKD8cb_zlPK0ZsH5sjpyqiRXTUQA58llQvUn73mOj0MIIsIioKISrVycAu2NL_rfRCX-D2Qj3F4g5-0YmnGlogIJJHKXehnR2T4nvqM0SxJtte9MisGcbqirllHU9X_GvK68w1A2Nx34P3yPHurSbFY4tnmWnOg8EGLqY1KfYRu0'); background-size: cover;">
+<div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-4xl">play_circle</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm group hover:border-primary transition-colors cursor-pointer">
+<div class="p-6 flex justify-between items-center">
+<div class="flex items-center gap-6">
+<div class="size-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC9hszvhuTmusYRvWxgsIo7YtoW12arJ3v12DYtuGQ67lk4nGQ2Kgg4ANIiReyRQSEsZ2XFxKRLwMW9jl888hscd69-XoG47MCbZyo4Loy94t4vkAiVNoEtQ5Yzv2kxx1xrRB9JHNrejiPzbtwDuDFEk8ev6vgg58zQjhSMRH4hdizVlG6jspbhomAU0QFhb43oxVZ9fP0vFb97s2cboB3IFplcFKuEFxq7YdYWjxrE83Dg2rrgEiTPUxluwcSrXxk7sk0D05y1nWxQ');"></div>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-[10px] font-bold uppercase tracking-wider">Медикаменты</span>
+<span class="text-[#4c739a] dark:text-slate-400 text-xs">Миссия #AR-2024-07</span>
+</div>
+<h3 class="text-lg font-bold text-[#0d141b] dark:text-white">Срочная поставка инсулина: Хатангский район</h3>
+<p class="text-sm text-[#4c739a] dark:text-slate-400">Архив: 30 окт. 2024 • 12 позиций расходов • 34 фото</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<p class="text-xl font-bold text-[#0d141b] dark:text-white">185,200₽</p>
+<p class="text-xs text-[#4c739a] font-medium uppercase">ПРОВЕРЕНО</p>
+</div>
+<span class="material-symbols-outlined text-[#4c739a] group-hover:text-primary">expand_more</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm group hover:border-primary transition-colors cursor-pointer">
+<div class="p-6 flex justify-between items-center">
+<div class="flex items-center gap-6">
+<div class="size-14 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9K2gXlbArmkNfrzum3yhoOH925gTyCdjYzLA_yaAkDa8-kbdZFZo6UHE1kI6QHSvGk5uSeSIjlQBAj5Ml0prUgsHTQJDVyQwLTg1GB-eY8W8-u8NmF9SB3GzGGPIUnXzVp4njGNxkB5K4d0Q-kgor_WKi5Y4KfX58bLK9ESqPi1yFmXADxQoxoob1GYaFmzddiRjfRuW3s4PWMxyjOGSLYSSzOm_vTNQMHcOIvIX_AirrKF8ax9_E5ecNh94yyOr8Er-QiKNmQnF0');"></div>
+</div>
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-[10px] font-bold uppercase tracking-wider">Инфраструктура</span>
+<span class="text-[#4c739a] dark:text-slate-400 text-xs">Миссия #AR-2024-05</span>
+</div>
+<h3 class="text-lg font-bold text-[#0d141b] dark:text-white">Дизельные генераторы — Полуостров Таймыр</h3>
+<p class="text-sm text-[#4c739a] dark:text-slate-400">Архив: 15 сент. 2024 • 8 позиций расходов • 12 фото</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<p class="text-xl font-bold text-[#0d141b] dark:text-white">890,000₽</p>
+<p class="text-xs text-[#4c739a] font-medium uppercase">ПРОВЕРЕНО</p>
+</div>
+<span class="material-symbols-outlined text-[#4c739a] group-hover:text-primary">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex justify-center mt-12 mb-8">
+<button class="px-6 py-2 rounded-lg bg-[#e7edf3] dark:bg-slate-800 text-[#0d141b] dark:text-white font-semibold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        Загрузить еще отчеты
+                    </button>
+</div>
+</div>
+</main>
+<footer class="bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 py-10">
+<div class="max-w-[1024px] mx-auto px-4 text-center">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full mb-4">
+<span class="material-symbols-outlined text-sm">verified</span>
+<span class="text-xs font-bold uppercase tracking-widest">Публичный аудит данных</span>
+</div>
+<p class="text-sm text-[#4c739a] dark:text-slate-400 max-w-lg mx-auto">
+                    Все финансовые данные поступают напрямую из банковского API и проверяются на соответствие товарным чекам. По всем вопросам: transparency@teploarktiki.ru
+                </p>
+</div>
+</footer>
+</div>
+</div>
+
+</body></html>

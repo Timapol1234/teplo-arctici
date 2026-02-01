@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Админ: Управление сборами - Тепло Арктики</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#13a4ec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101c22",
+          },
+          fontFamily: {
+            "display": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .active-nav {
+      background-color: #13a4ec20;
+      color: #13a4ec;
+      border-right: 4px solid #13a4ec;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col sticky top-0 h-screen">
+      <div class="p-6 flex items-center gap-3">
+        <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white shadow-lg">
+          <span class="material-symbols-outlined">ac_unit</span>
+        </div>
+        <div class="flex flex-col">
+          <h1 class="text-[#0d171b] dark:text-white text-base font-bold leading-tight">Тепло Арктики</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Админ-панель</p>
+        </div>
+      </div>
+      <nav class="flex-1 px-3 space-y-1">
+        <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="/admin/dashboard.html">
+          <span class="material-symbols-outlined">receipt_long</span>
+          <span class="text-sm font-medium">Транзакции</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-3 rounded-lg active-nav text-primary font-semibold" href="/admin/campaigns.html">
+          <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">handshake</span>
+          <span class="text-sm">Управление сборами</span>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-3 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="/admin/reports.html">
+          <span class="material-symbols-outlined">bar_chart</span>
+          <span class="text-sm font-medium">Отчеты</span>
+        </a>
+      </nav>
+      <div class="p-4 border-t border-slate-200 dark:border-slate-800">
+        <div class="flex items-center gap-3 p-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors" data-logout>
+          <div class="size-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+            <span class="material-symbols-outlined text-lg">person</span>
+          </div>
+          <div class="flex-1 overflow-hidden">
+            <p id="admin-name" class="text-sm font-medium truncate">Администратор</p>
+            <p class="text-xs text-slate-500 truncate">Выйти</p>
+          </div>
+          <span class="material-symbols-outlined text-slate-400">logout</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col">
+      <!-- Header & Breadcrumbs -->
+      <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4">
+        <nav class="flex items-center gap-2 mb-2">
+          <a class="text-slate-500 dark:text-slate-400 text-sm font-medium hover:text-primary transition-colors" href="/admin/campaigns.html">Сборы</a>
+          <span class="text-slate-300 dark:text-slate-600 text-sm">/</span>
+          <span id="breadcrumb-current" class="text-slate-900 dark:text-white text-sm font-medium">Список сборов</span>
+        </nav>
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Управление сборами</h2>
+          <button id="create-campaign-btn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg font-bold shadow-md shadow-primary/20 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined">add</span>
+            Создать сбор
+          </button>
+        </div>
+      </header>
+
+      <!-- Campaigns List -->
+      <div id="campaigns-list" class="p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Loading state -->
+          <div class="col-span-full flex items-center justify-center py-12">
+            <div class="text-center">
+              <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-700 animate-pulse">hourglass_empty</span>
+              <p class="mt-4 text-slate-500">Загрузка сборов...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campaign Form (hidden by default) -->
+      <div id="campaign-form-container" class="hidden p-8 max-w-5xl">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Left Column: Form Info -->
+          <div class="lg:col-span-2 space-y-6">
+            <form id="campaign-form">
+              <!-- Title Input -->
+              <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <label class="block mb-2 text-slate-900 dark:text-white font-semibold">Название сбора</label>
+                <input id="campaign-title" name="title" class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="Введите название целевого сбора" type="text" required/>
+              </div>
+
+              <!-- Description Input -->
+              <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <label class="block mb-2 text-slate-900 dark:text-white font-semibold">Описание сбора</label>
+                <textarea id="campaign-description" name="description" class="w-full min-h-[240px] p-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none outline-none" placeholder="Расскажите подробнее о целях сбора и людях, которым нужна помощь..." required></textarea>
+              </div>
+
+              <!-- Image Upload Input -->
+              <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <label class="block mb-4 text-slate-900 dark:text-white font-semibold">Изображение баннера</label>
+
+                <!-- Превью изображения -->
+                <div id="image-preview-container" class="hidden mb-4">
+                  <div class="relative inline-block">
+                    <img id="image-preview" class="max-h-48 rounded-lg border border-slate-200 dark:border-slate-700" src="" alt="Превью"/>
+                    <button type="button" id="remove-image-btn" class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-lg transition-colors">
+                      <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Зона загрузки -->
+                <label id="upload-zone" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:border-primary hover:bg-primary/5 transition-all">
+                  <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                    <span class="material-symbols-outlined text-4xl text-slate-400 mb-2">cloud_upload</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400"><span class="font-semibold text-primary">Нажмите для выбора</span> или перетащите файл</p>
+                    <p class="text-xs text-slate-500 mt-1">PNG, JPG, GIF, WebP (макс. 10MB)</p>
+                  </div>
+                  <input id="campaign-image" name="image_file" class="hidden" type="file" accept="image/jpeg,image/png,image/gif,image/webp"/>
+                </label>
+                <p class="mt-2 text-xs text-slate-500">Рекомендуемый размер: 1200x600px</p>
+              </div>
+            </form>
+          </div>
+
+          <!-- Right Column: Settings Card -->
+          <div class="space-y-6">
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Параметры сбора</h3>
+
+              <!-- Goal Amount -->
+              <div class="mb-6">
+                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Требуемая сумма</label>
+                <div class="relative">
+                  <input id="campaign-goal" name="goal_amount" form="campaign-form" class="w-full h-12 pl-4 pr-12 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" placeholder="0" type="number" min="0" required/>
+                  <div class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">₽</div>
+                </div>
+              </div>
+
+              <!-- Status Toggle -->
+              <div class="flex items-center justify-between py-4 border-t border-slate-100 dark:border-slate-800">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900 dark:text-white leading-tight">Статус активности</p>
+                  <p class="text-xs text-slate-500">Сбор будет виден на сайте</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input id="campaign-active" name="is_active" form="campaign-form" checked class="sr-only peer" type="checkbox"/>
+                  <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                </label>
+              </div>
+
+              <!-- Date Picker -->
+              <div class="pt-4 border-t border-slate-100 dark:border-slate-800">
+                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Дата окончания (опционально)</label>
+                <input id="campaign-end-date" name="end_date" form="campaign-form" class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none" type="date"/>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="flex gap-3 pt-6 border-t border-slate-100 dark:border-slate-800 mt-6">
+                <button type="button" id="cancel-btn" class="flex-1 px-4 py-2 text-slate-600 dark:text-slate-300 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                  Отмена
+                </button>
+                <button type="submit" form="campaign-form" id="save-btn" class="flex-1 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-bold transition-all">
+                  Сохранить
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Help -->
+            <div class="bg-primary/5 dark:bg-primary/10 p-5 rounded-xl border border-primary/20">
+              <div class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-primary">info</span>
+                <div>
+                  <h4 class="text-sm font-bold text-primary mb-1">Советы по заполнению</h4>
+                  <ul class="text-xs text-slate-600 dark:text-slate-400 space-y-2 list-disc pl-3">
+                    <li>Используйте качественное фото для обложки</li>
+                    <li>Четко опишите, на что именно пойдут средства</li>
+                    <li>Указывайте реалистичную сумму сбора</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/admin.js?v=6"></script>
+  <script>
+    let editingCampaignId = null;
+    let selectedImageFile = null;
+    let existingImageUrl = null;
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', async () => {
+      const isAuth = await checkAuth();
+      if (!isAuth) return;
+
+      initLogout();
+      initThemeToggle();
+      loadAdminInfo();
+      initImageUpload();
+      await loadCampaigns();
+
+      // Обработчики
+      document.getElementById('create-campaign-btn').addEventListener('click', showCampaignForm);
+      document.getElementById('cancel-btn').addEventListener('click', hideCampaignForm);
+      document.getElementById('campaign-form').addEventListener('submit', handleCampaignSubmit);
+    });
+
+    // Инициализация загрузки изображений
+    function initImageUpload() {
+      const fileInput = document.getElementById('campaign-image');
+      const uploadZone = document.getElementById('upload-zone');
+      const previewContainer = document.getElementById('image-preview-container');
+      const preview = document.getElementById('image-preview');
+      const removeBtn = document.getElementById('remove-image-btn');
+
+      // Обработка выбора файла
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          handleImageSelect(file);
+        }
+      });
+
+      // Drag & Drop
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('border-primary', 'bg-primary/10');
+      });
+
+      uploadZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-primary', 'bg-primary/10');
+      });
+
+      uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-primary', 'bg-primary/10');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+          handleImageSelect(file);
+        }
+      });
+
+      // Удаление изображения
+      removeBtn.addEventListener('click', () => {
+        clearImageSelection();
+      });
+    }
+
+    // Обработка выбора изображения
+    function handleImageSelect(file) {
+      if (!file.type.startsWith('image/')) {
+        UI.showError('Выберите изображение');
+        return;
+      }
+
+      if (file.size > 10 * 1024 * 1024) {
+        UI.showError('Файл слишком большой. Максимум 10MB');
+        return;
+      }
+
+      selectedImageFile = file;
+      existingImageUrl = null;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('image-preview').src = e.target.result;
+        document.getElementById('image-preview-container').classList.remove('hidden');
+        document.getElementById('upload-zone').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Показать существующее изображение
+    function showExistingImage(url) {
+      if (url) {
+        existingImageUrl = url;
+        document.getElementById('image-preview').src = url;
+        document.getElementById('image-preview-container').classList.remove('hidden');
+        document.getElementById('upload-zone').classList.add('hidden');
+      }
+    }
+
+    // Очистка выбора изображения
+    function clearImageSelection() {
+      selectedImageFile = null;
+      existingImageUrl = null;
+      document.getElementById('campaign-image').value = '';
+      document.getElementById('image-preview').src = '';
+      document.getElementById('image-preview-container').classList.add('hidden');
+      document.getElementById('upload-zone').classList.remove('hidden');
+    }
+
+    // Загрузка информации администратора
+    function loadAdminInfo() {
+      const adminData = TokenManager.getAdminData();
+      if (adminData) {
+        document.getElementById('admin-name').textContent = adminData.full_name || adminData.email;
+      }
+    }
+
+    // Загрузка списка сборов
+    async function loadCampaigns() {
+      try {
+        const campaigns = await AdminAPI.getCampaigns();
+        renderCampaigns(campaigns);
+      } catch (error) {
+        UI.showError('Ошибка загрузки сборов: ' + error.message);
+        document.querySelector('#campaigns-list .grid').innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <span class="material-symbols-outlined text-6xl text-red-300">error</span>
+            <p class="mt-4 text-red-500">Ошибка загрузки данных</p>
+          </div>
+        `;
+      }
+    }
+
+    // Отображение сборов
+    function renderCampaigns(campaigns) {
+      const container = document.querySelector('#campaigns-list .grid');
+
+      if (campaigns.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-700">inbox</span>
+            <p class="mt-4 text-slate-500">Нет активных сборов</p>
+            <button id="create-first-campaign-btn" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-bold hover:bg-primary/90 transition-all">
+              Создать первый сбор
+            </button>
+          </div>
+        `;
+        document.getElementById('create-first-campaign-btn').addEventListener('click', () => showCampaignForm());
+        return;
+      }
+
+      container.innerHTML = campaigns.map(c => {
+        const progress = c.goal_amount > 0 ? Math.round((c.current_amount / c.goal_amount) * 100) : 0;
+        const isActive = c.is_active;
+
+        return `
+          <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            ${c.image_url ? `
+              <div class="h-48 bg-cover bg-center" style="background-image: url('${c.image_url}')"></div>
+            ` : `
+              <div class="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <span class="material-symbols-outlined text-6xl text-primary/30">image</span>
+              </div>
+            `}
+            <div class="p-6">
+              <div class="flex items-start justify-between gap-2 mb-3">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white line-clamp-2">${c.title}</h3>
+                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}">
+                  <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-slate-400'}"></span>
+                  ${isActive ? 'Активен' : 'Неактивен'}
+                </span>
+              </div>
+              <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">${c.description}</p>
+
+              <!-- Progress -->
+              <div class="mb-4">
+                <div class="flex justify-between text-sm mb-2">
+                  <span class="font-semibold text-slate-900 dark:text-white">${UI.formatAmount(c.current_amount)}</span>
+                  <span class="text-slate-500">из ${UI.formatAmount(c.goal_amount)}</span>
+                </div>
+                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                  <div class="bg-primary h-2 rounded-full transition-all" style="width: ${Math.min(progress, 100)}%"></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">${progress}% собрано</p>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex gap-2">
+                <button data-edit-campaign="${c.id}" class="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                  <span class="material-symbols-outlined text-lg">edit</span>
+                  <span class="text-sm font-medium">Изменить</span>
+                </button>
+                <button data-delete-campaign="${c.id}" data-title="${c.title.replace(/"/g, '&quot;')}" class="px-4 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                  <span class="material-symbols-outlined text-lg">delete</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Привязываем обработчики событий
+      attachCampaignEventListeners();
+    }
+
+    // Показать форму создания/редактирования
+    function showCampaignForm(campaign = null) {
+      editingCampaignId = campaign?.id || null;
+
+      document.getElementById('campaigns-list').classList.add('hidden');
+      document.getElementById('campaign-form-container').classList.remove('hidden');
+
+      // Сброс изображения
+      clearImageSelection();
+
+      if (campaign) {
+        document.getElementById('breadcrumb-current').textContent = 'Редактирование сбора';
+        document.getElementById('campaign-title').value = campaign.title;
+        document.getElementById('campaign-description').value = campaign.description;
+        document.getElementById('campaign-goal').value = campaign.goal_amount;
+        document.getElementById('campaign-active').checked = campaign.is_active;
+        document.getElementById('campaign-end-date').value = campaign.end_date ? campaign.end_date.split('T')[0] : '';
+        document.getElementById('save-btn').textContent = 'Обновить';
+
+        // Показать существующее изображение
+        if (campaign.image_url) {
+          showExistingImage(campaign.image_url);
+        }
+      } else {
+        document.getElementById('breadcrumb-current').textContent = 'Создание нового сбора';
+        document.getElementById('campaign-form').reset();
+        document.getElementById('campaign-active').checked = true;
+        document.getElementById('save-btn').textContent = 'Создать';
+      }
+    }
+
+    // Скрыть форму
+    function hideCampaignForm() {
+      document.getElementById('campaigns-list').classList.remove('hidden');
+      document.getElementById('campaign-form-container').classList.add('hidden');
+      document.getElementById('breadcrumb-current').textContent = 'Список сборов';
+      editingCampaignId = null;
+      clearImageSelection();
+    }
+
+    // Редактирование сбора
+    async function editCampaign(id) {
+      try {
+        const campaigns = await AdminAPI.getCampaigns();
+        const campaign = campaigns.find(c => c.id === id);
+        if (campaign) {
+          showCampaignForm(campaign);
+        }
+      } catch (error) {
+        UI.showError('Ошибка загрузки сбора: ' + error.message);
+      }
+    }
+
+    // Удаление сбора
+    async function deleteCampaign(id, title) {
+      if (!confirm(`Вы уверены, что хотите удалить сбор "${title}"?\n\nВнимание: все связанные пожертвования и отчеты также будут удалены!`)) {
+        return;
+      }
+
+      try {
+        await AdminAPI.deleteCampaign(id);
+        UI.showNotification('Сбор успешно удален');
+        await loadCampaigns();
+      } catch (error) {
+        UI.showError('Ошибка удаления сбора: ' + error.message);
+      }
+    }
+
+    // Обработка отправки формы
+    async function handleCampaignSubmit(e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+
+      // Добавляем текстовые поля
+      formData.append('title', document.getElementById('campaign-title').value);
+      formData.append('description', document.getElementById('campaign-description').value);
+      formData.append('goal_amount', document.getElementById('campaign-goal').value);
+      formData.append('is_active', document.getElementById('campaign-active').checked ? 'true' : 'false');
+
+      const endDate = document.getElementById('campaign-end-date').value;
+      if (endDate) {
+        formData.append('end_date', endDate);
+      }
+
+      // Добавляем изображение
+      if (selectedImageFile) {
+        // Новый файл выбран
+        formData.append('image_file', selectedImageFile);
+      } else if (existingImageUrl) {
+        // Сохраняем существующий URL
+        formData.append('image_url', existingImageUrl);
+      } else {
+        // Изображение удалено - отправляем пустую строку
+        formData.append('image_url', '');
+      }
+
+      try {
+        if (editingCampaignId) {
+          await AdminAPI.updateCampaign(editingCampaignId, formData);
+          UI.showNotification('Сбор успешно обновлен');
+        } else {
+          await AdminAPI.createCampaign(formData);
+          UI.showNotification('Сбор успешно создан');
+        }
+
+        hideCampaignForm();
+        await loadCampaigns();
+      } catch (error) {
+        UI.showError('Ошибка сохранения сбора: ' + error.message);
+      }
+    }
+
+    // Привязка обработчиков для кнопок редактирования/удаления
+    function attachCampaignEventListeners() {
+      // Кнопки редактирования
+      document.querySelectorAll('[data-edit-campaign]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.editCampaign);
+          editCampaign(id);
+        });
+      });
+
+      // Кнопки удаления
+      document.querySelectorAll('[data-delete-campaign]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.deleteCampaign);
+          const title = btn.dataset.title;
+          deleteCampaign(id, title);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
