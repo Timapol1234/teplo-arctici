@@ -1,5 +1,7 @@
 # Тепло Арктики
 
+[![CI](https://github.com/username/teplo-arctici/actions/workflows/ci.yml/badge.svg)](https://github.com/username/teplo-arctici/actions/workflows/ci.yml)
+
 Веб-платформа благотворительного фонда с максимальной прозрачностью для жертвователей.
 
 ## Особенности
