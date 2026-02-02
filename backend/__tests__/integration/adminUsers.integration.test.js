@@ -108,7 +108,7 @@ describe('Admin Users API Integration Tests', () => {
   describe('POST /api/admin/users', () => {
     const newAdmin = {
       email: 'newadmin@example.com',
-      password: 'password123',
+      password: 'Password123!',
       full_name: 'New Admin',
       role: 'admin'
     };
@@ -126,20 +126,20 @@ describe('Admin Users API Integration Tests', () => {
       const response = await request(app)
         .post('/api/admin/users')
         .set('Authorization', `Bearer ${superAdminToken}`)
-        .send({ password: 'password123' });
+        .send({ password: 'Password123!' });
 
       expect(response.status).toBe(400);
       expect(response.body.error).toBe('Email и пароль обязательны');
     });
 
-    it('should return 400 if password too short', async () => {
+    it('should return 400 if password does not meet requirements', async () => {
       const response = await request(app)
         .post('/api/admin/users')
         .set('Authorization', `Bearer ${superAdminToken}`)
         .send({ email: 'test@test.com', password: 'short' });
 
       expect(response.status).toBe(400);
-      expect(response.body.error).toBe('Пароль должен быть минимум 8 символов');
+      expect(response.body.error).toContain('Пароль не соответствует требованиям');
     });
 
     it('should return 400 if email already exists', async () => {

@@ -77,7 +77,7 @@ describe('AdminUsers Controller', () => {
     beforeEach(() => {
       mockReq.body = {
         email: 'new@example.com',
-        password: 'password123',
+        password: 'Password123!',
         full_name: 'New Admin',
         role: 'admin'
       };
@@ -92,7 +92,7 @@ describe('AdminUsers Controller', () => {
 
       await adminUsersController.createAdmin(mockReq, mockRes);
 
-      expect(bcrypt.hash).toHaveBeenCalledWith('password123', 12);
+      expect(bcrypt.hash).toHaveBeenCalledWith('Password123!', 12);
       expect(mockRes.status).toHaveBeenCalledWith(201);
       expect(mockRes.json).toHaveBeenCalledWith({
         success: true,
@@ -101,7 +101,7 @@ describe('AdminUsers Controller', () => {
     });
 
     it('should return 400 if email missing', async () => {
-      mockReq.body = { password: 'password123' };
+      mockReq.body = { password: 'Password123!' };
 
       await adminUsersController.createAdmin(mockReq, mockRes);
 
@@ -109,13 +109,17 @@ describe('AdminUsers Controller', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'Email и пароль обязательны' });
     });
 
-    it('should return 400 if password too short', async () => {
+    it('should return 400 if password does not meet requirements', async () => {
       mockReq.body.password = 'short';
 
       await adminUsersController.createAdmin(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Пароль должен быть минимум 8 символов' });
+      expect(mockRes.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.stringContaining('Пароль не соответствует требованиям')
+        })
+      );
     });
 
     it('should return 400 if email already exists', async () => {
@@ -186,7 +190,7 @@ describe('AdminUsers Controller', () => {
     });
 
     it('should hash new password if provided', async () => {
-      mockReq.body.password = 'newpassword123';
+      mockReq.body.password = 'NewPassword123!';
       db.query
         .mockResolvedValueOnce(mockQueryResult([testData.admin]))
         .mockResolvedValueOnce(mockQueryResult([testData.admin]));
@@ -195,7 +199,7 @@ describe('AdminUsers Controller', () => {
 
       await adminUsersController.updateAdmin(mockReq, mockRes);
 
-      expect(bcrypt.hash).toHaveBeenCalledWith('newpassword123', 12);
+      expect(bcrypt.hash).toHaveBeenCalledWith('NewPassword123!', 12);
     });
 
     it('should return 400 if no data to update', async () => {

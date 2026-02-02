@@ -7,6 +7,7 @@ const path = require('path');
 require('dotenv').config();
 
 const { publicLimiter, adminLimiter, loginLimiter } = require('./middleware/rateLimiter');
+const { csrfProtection } = require('./middleware/csrfProtection');
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
 const verificationRoutes = require('./routes/verification');
@@ -101,7 +102,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // API Routes с rate limiting
 app.use('/api', publicLimiter, publicRoutes);
 app.use('/api/admin/login', loginLimiter);
-app.use('/api/admin', adminLimiter, adminRoutes);
+app.use('/api/admin', adminLimiter, csrfProtection, adminRoutes);
 app.use('/api/verification', publicLimiter, verificationRoutes);
 
 // Health check endpoint

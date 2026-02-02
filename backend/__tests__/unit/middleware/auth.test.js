@@ -51,7 +51,7 @@ describe('Auth Middleware', () => {
 
     it('should return 403 if token verification fails', () => {
       mockReq.headers = { authorization: 'Bearer invalid-token' };
-      jwt.verify.mockImplementation((token, secret, callback) => {
+      jwt.verify.mockImplementation((token, secret, options, callback) => {
         callback(new Error('Invalid token'), null);
       });
 
@@ -60,6 +60,7 @@ describe('Auth Middleware', () => {
       expect(jwt.verify).toHaveBeenCalledWith(
         'invalid-token',
         process.env.JWT_SECRET,
+        { algorithms: ['HS256'] },
         expect.any(Function)
       );
       expect(mockRes.status).toHaveBeenCalledWith(403);
@@ -70,7 +71,7 @@ describe('Auth Middleware', () => {
     it('should call next and set user for valid token', () => {
       const userData = { id: 1, email: 'admin@example.com', role: 'admin' };
       mockReq.headers = { authorization: 'Bearer valid-token' };
-      jwt.verify.mockImplementation((token, secret, callback) => {
+      jwt.verify.mockImplementation((token, secret, options, callback) => {
         callback(null, userData);
       });
 
@@ -79,6 +80,7 @@ describe('Auth Middleware', () => {
       expect(jwt.verify).toHaveBeenCalledWith(
         'valid-token',
         process.env.JWT_SECRET,
+        { algorithms: ['HS256'] },
         expect.any(Function)
       );
       expect(mockReq.user).toEqual(userData);
@@ -90,7 +92,7 @@ describe('Auth Middleware', () => {
       mockReq.headers = { authorization: 'Bearer expired-token' };
       const expiredError = new Error('jwt expired');
       expiredError.name = 'TokenExpiredError';
-      jwt.verify.mockImplementation((token, secret, callback) => {
+      jwt.verify.mockImplementation((token, secret, options, callback) => {
         callback(expiredError, null);
       });
 

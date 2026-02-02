@@ -126,15 +126,17 @@ async function getAuditLogById(req, res) {
  */
 async function getAuditStats(req, res) {
   try {
-    const { days = 30 } = req.query;
+    // Безопасная валидация: только целые числа от 1 до 365
+    const days = Math.min(Math.max(parseInt(req.query.days) || 30, 1), 365);
 
-    // Статистика по типам действий
+    // Статистика по типам действий (используем параметризованный запрос)
     const actionStats = await db.query(
       `SELECT action, COUNT(*) as count
        FROM audit_logs
-       WHERE created_at >= NOW() - INTERVAL '${parseInt(days)} days'
+       WHERE created_at >= NOW() - make_interval(days => $1)
        GROUP BY action
-       ORDER BY count DESC`
+       ORDER BY count DESC`,
+      [days]
     );
 
     // Статистика по админам
@@ -145,10 +147,11 @@ async function getAuditStats(req, res) {
         COUNT(al.id) as actions_count
       FROM audit_logs al
       JOIN admins a ON al.admin_id = a.id
-      WHERE al.created_at >= NOW() - INTERVAL '${parseInt(days)} days'
+      WHERE al.created_at >= NOW() - make_interval(days => $1)
       GROUP BY a.id, a.email, a.full_name
       ORDER BY actions_count DESC
-      LIMIT 10`
+      LIMIT 10`,
+      [days]
     );
 
     // Активность по дням
@@ -157,13 +160,14 @@ async function getAuditStats(req, res) {
         DATE(created_at) as date,
         COUNT(*) as count
       FROM audit_logs
-      WHERE created_at >= NOW() - INTERVAL '${parseInt(days)} days'
+      WHERE created_at >= NOW() - make_interval(days => $1)
       GROUP BY DATE(created_at)
-      ORDER BY date DESC`
+      ORDER BY date DESC`,
+      [days]
     );
 
     res.json({
-      period_days: parseInt(days),
+      period_days: days,
       by_action: actionStats.rows,
       by_admin: adminStats.rows,
       daily_activity: dailyActivity.rows

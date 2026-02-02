@@ -44,21 +44,37 @@ describe('Auth Controller', () => {
 
     it('should return 401 for invalid password', async () => {
       mockReq.body = { email: 'admin@example.com', password: 'wrongpassword' };
-      db.query.mockResolvedValue(mockQueryResult([testData.admin]));
+      const adminWithLockoutFields = {
+        ...testData.admin,
+        failed_login_attempts: 0,
+        locked_until: null
+      };
+      db.query
+        .mockResolvedValueOnce(mockQueryResult([adminWithLockoutFields]))
+        .mockResolvedValueOnce(mockQueryResult([])); // Update failed_login_attempts
       bcrypt.compare.mockResolvedValue(false);
 
       await authController.login(mockReq, mockRes);
 
       expect(bcrypt.compare).toHaveBeenCalledWith('wrongpassword', testData.admin.password_hash);
       expect(mockRes.status).toHaveBeenCalledWith(401);
-      expect(mockRes.json).toHaveBeenCalledWith({ error: 'Неверный email или пароль' });
+      expect(mockRes.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.stringContaining('Неверный email или пароль')
+        })
+      );
     });
 
     it('should return token and admin data for valid credentials', async () => {
       mockReq.body = { email: 'admin@example.com', password: 'correctpassword' };
+      const adminWithLockoutFields = {
+        ...testData.admin,
+        failed_login_attempts: 0,
+        locked_until: null
+      };
       db.query
-        .mockResolvedValueOnce(mockQueryResult([testData.admin]))
-        .mockResolvedValueOnce(mockQueryResult([])); // Update last_login
+        .mockResolvedValueOnce(mockQueryResult([adminWithLockoutFields]))
+        .mockResolvedValueOnce(mockQueryResult([])); // Update last_login and reset failed_attempts
       bcrypt.compare.mockResolvedValue(true);
       jwt.sign.mockReturnValue('mock-jwt-token');
 
@@ -71,7 +87,7 @@ describe('Auth Controller', () => {
           email: testData.admin.email
         }),
         process.env.JWT_SECRET,
-        { expiresIn: '24h' }
+        { algorithm: 'HS256', expiresIn: '24h' }
       );
       expect(mockRes.json).toHaveBeenCalledWith({
         success: true,
@@ -115,7 +131,7 @@ describe('Auth Controller', () => {
     });
 
     it('should return 404 if user not found', async () => {
-      mockReq.body = { old_password: 'oldpass', new_password: 'newpass123' };
+      mockReq.body = { old_password: 'oldpass', new_password: 'NewPassword123!' };
       db.query.mockResolvedValue(mockQueryResult([]));
 
       await authController.changePassword(mockReq, mockRes);
@@ -125,7 +141,7 @@ describe('Auth Controller', () => {
     });
 
     it('should return 401 if old password is incorrect', async () => {
-      mockReq.body = { old_password: 'wrongpass', new_password: 'newpass123' };
+      mockReq.body = { old_password: 'wrongpass', new_password: 'NewPassword123!' };
       db.query.mockResolvedValue(mockQueryResult([{ password_hash: 'hashedpass' }]));
       bcrypt.compare.mockResolvedValue(false);
 
@@ -135,8 +151,23 @@ describe('Auth Controller', () => {
       expect(mockRes.json).toHaveBeenCalledWith({ error: 'Неверный текущий пароль' });
     });
 
+    it('should return 400 for weak new password', async () => {
+      mockReq.body = { old_password: 'oldpass', new_password: 'weak' };
+      db.query.mockResolvedValue(mockQueryResult([{ password_hash: 'oldhash' }]));
+      bcrypt.compare.mockResolvedValue(true);
+
+      await authController.changePassword(mockReq, mockRes);
+
+      expect(mockRes.status).toHaveBeenCalledWith(400);
+      expect(mockRes.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          error: expect.stringContaining('Новый пароль не соответствует требованиям')
+        })
+      );
+    });
+
     it('should successfully change password', async () => {
-      mockReq.body = { old_password: 'oldpass', new_password: 'newpass123' };
+      mockReq.body = { old_password: 'oldpass', new_password: 'NewPassword123!' };
       db.query
         .mockResolvedValueOnce(mockQueryResult([{ password_hash: 'oldhash' }]))
         .mockResolvedValueOnce(mockQueryResult([])); // Update password
@@ -145,7 +176,7 @@ describe('Auth Controller', () => {
 
       await authController.changePassword(mockReq, mockRes);
 
-      expect(bcrypt.hash).toHaveBeenCalledWith('newpass123', 10);
+      expect(bcrypt.hash).toHaveBeenCalledWith('NewPassword123!', 12);
       expect(mockRes.json).toHaveBeenCalledWith({
         success: true,
         message: 'Пароль успешно изменен'

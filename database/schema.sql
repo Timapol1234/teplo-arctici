@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS admins (
   is_active BOOLEAN DEFAULT TRUE,
   last_login TIMESTAMP,
   last_login_ip VARCHAR(45),
+  failed_login_attempts INTEGER DEFAULT 0,
+  locked_until TIMESTAMP DEFAULT NULL,
   created_by INTEGER REFERENCES admins(id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

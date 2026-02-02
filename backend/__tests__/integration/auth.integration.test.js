@@ -70,7 +70,14 @@ describe('Auth API Integration Tests', () => {
     });
 
     it('should return 401 for wrong password', async () => {
-      db.query.mockResolvedValue(mockQueryResult([testData.admin]));
+      const adminWithLockoutFields = {
+        ...testData.admin,
+        failed_login_attempts: 0,
+        locked_until: null
+      };
+      db.query
+        .mockResolvedValueOnce(mockQueryResult([adminWithLockoutFields]))
+        .mockResolvedValueOnce(mockQueryResult([])); // Update failed_login_attempts
       bcrypt.compare.mockResolvedValue(false);
 
       const response = await request(app)
@@ -78,7 +85,7 @@ describe('Auth API Integration Tests', () => {
         .send({ email: 'admin@teplo-arctici.ru', password: 'wrongpassword' });
 
       expect(response.status).toBe(401);
-      expect(response.body.error).toBe('Неверный email или пароль');
+      expect(response.body.error).toContain('Неверный email или пароль');
     });
 
     it('should return 401 for deactivated account', async () => {
@@ -189,10 +196,23 @@ describe('Auth API Integration Tests', () => {
       const response = await request(app)
         .post('/api/admin/change-password')
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ old_password: 'wrongold', new_password: 'newpass123' });
+        .send({ old_password: 'wrongold', new_password: 'NewPassword123!' });
 
       expect(response.status).toBe(401);
       expect(response.body.error).toBe('Неверный текущий пароль');
+    });
+
+    it('should return 400 for weak new password', async () => {
+      db.query.mockResolvedValue(mockQueryResult([{ password_hash: 'hash' }]));
+      bcrypt.compare.mockResolvedValue(true);
+
+      const response = await request(app)
+        .post('/api/admin/change-password')
+        .set('Authorization', `Bearer ${validToken}`)
+        .send({ old_password: 'oldpass', new_password: 'weak' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toContain('Новый пароль не соответствует требованиям');
     });
 
     it('should successfully change password', async () => {
@@ -205,7 +225,7 @@ describe('Auth API Integration Tests', () => {
       const response = await request(app)
         .post('/api/admin/change-password')
         .set('Authorization', `Bearer ${validToken}`)
-        .send({ old_password: 'oldpass', new_password: 'newpass123' });
+        .send({ old_password: 'oldpass', new_password: 'NewPassword123!' });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);

@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const db = require('../config/database');
 const { auditLog, sanitizeForLog, AuditActions } = require('../utils/auditLog');
+const { validatePassword } = require('../utils/passwordValidator');
 
 /**
  * Получить список всех администраторов
@@ -85,8 +86,11 @@ async function createAdmin(req, res) {
       return res.status(400).json({ error: 'Email и пароль обязательны' });
     }
 
-    if (password.length < 8) {
-      return res.status(400).json({ error: 'Пароль должен быть минимум 8 символов' });
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      return res.status(400).json({
+        error: `Пароль не соответствует требованиям: ${passwordValidation.errors.join(', ')}`
+      });
     }
 
     // Проверяем уникальность email
@@ -178,8 +182,11 @@ async function updateAdmin(req, res) {
     }
 
     if (password) {
-      if (password.length < 8) {
-        return res.status(400).json({ error: 'Пароль должен быть минимум 8 символов' });
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.isValid) {
+        return res.status(400).json({
+          error: `Пароль не соответствует требованиям: ${passwordValidation.errors.join(', ')}`
+        });
       }
       const passwordHash = await bcrypt.hash(password, 12);
       updates.push(`password_hash = $${paramIndex++}`);
