@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { auditLog, AuditActions } = require('../utils/auditLog');
 
 // Получить отчеты для конкретного сбора
 async function getReportsByCampaign(req, res) {
@@ -127,6 +128,22 @@ async function createReport(req, res) {
       [campaign_id, expense_date, amount, description, finalReceiptUrl, vendor_name || null, req.user?.id || null]
     );
 
+    // Логируем создание отчета
+    await auditLog({
+      adminId: req.user?.id,
+      action: AuditActions.CREATE_REPORT,
+      resourceType: 'report',
+      resourceId: result.rows[0].id,
+      newValues: {
+        campaign_id,
+        expense_date,
+        amount,
+        description,
+        vendor_name: vendor_name || null
+      },
+      req
+    });
+
     res.status(201).json({
       success: true,
       report: {
@@ -145,6 +162,14 @@ async function updateReport(req, res) {
   try {
     const { id } = req.params;
     const { expense_date, amount, description, receipt_url, vendor_name } = req.body;
+
+    // Получаем текущие данные для аудита
+    const checkResult = await db.query('SELECT * FROM reports WHERE id = $1', [id]);
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Отчет не найден' });
+    }
+
+    const oldReport = checkResult.rows[0];
 
     // Определяем URL документа: загруженный файл имеет приоритет над ссылкой
     let finalReceiptUrl = receipt_url;
@@ -165,9 +190,21 @@ async function updateReport(req, res) {
       [expense_date, amount, description, finalReceiptUrl, vendor_name, id]
     );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Отчет не найден' });
-    }
+    // Логируем обновление отчета
+    await auditLog({
+      adminId: req.user?.id,
+      action: AuditActions.UPDATE_REPORT,
+      resourceType: 'report',
+      resourceId: parseInt(id),
+      oldValues: {
+        expense_date: oldReport.expense_date,
+        amount: oldReport.amount,
+        description: oldReport.description,
+        vendor_name: oldReport.vendor_name
+      },
+      newValues: { expense_date, amount, description, vendor_name },
+      req
+    });
 
     res.json({
       success: true,
@@ -184,11 +221,31 @@ async function deleteReport(req, res) {
   try {
     const { id } = req.params;
 
-    const result = await db.query('DELETE FROM reports WHERE id = $1 RETURNING id', [id]);
-
-    if (result.rows.length === 0) {
+    // Получаем данные для аудита перед удалением
+    const checkResult = await db.query('SELECT * FROM reports WHERE id = $1', [id]);
+    if (checkResult.rows.length === 0) {
       return res.status(404).json({ error: 'Отчет не найден' });
     }
+
+    const oldReport = checkResult.rows[0];
+
+    await db.query('DELETE FROM reports WHERE id = $1', [id]);
+
+    // Логируем удаление отчета
+    await auditLog({
+      adminId: req.user?.id,
+      action: AuditActions.DELETE_REPORT,
+      resourceType: 'report',
+      resourceId: parseInt(id),
+      oldValues: {
+        campaign_id: oldReport.campaign_id,
+        expense_date: oldReport.expense_date,
+        amount: oldReport.amount,
+        description: oldReport.description,
+        vendor_name: oldReport.vendor_name
+      },
+      req
+    });
 
     res.json({ success: true, message: 'Отчет удален' });
   } catch (error) {

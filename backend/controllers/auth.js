@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../config/database');
+const { auditLog, sanitizeForLog, AuditActions } = require('../utils/auditLog');
 
 // Авторизация администратора
 async function login(req, res) {
@@ -14,15 +15,44 @@ async function login(req, res) {
     );
 
     if (result.rows.length === 0) {
+      // Логируем неудачную попытку входа
+      await auditLog({
+        adminId: null,
+        action: AuditActions.LOGIN_FAILED,
+        resourceType: 'admin',
+        newValues: { email },
+        req
+      });
       return res.status(401).json({ error: 'Неверный email или пароль' });
     }
 
     const admin = result.rows[0];
 
+    // Проверяем активен ли аккаунт
+    if (admin.is_active === false) {
+      await auditLog({
+        adminId: admin.id,
+        action: AuditActions.LOGIN_FAILED,
+        resourceType: 'admin',
+        resourceId: admin.id,
+        newValues: { email, reason: 'Account deactivated' },
+        req
+      });
+      return res.status(401).json({ error: 'Аккаунт деактивирован' });
+    }
+
     // Проверяем пароль
     const passwordValid = await bcrypt.compare(password, admin.password_hash);
 
     if (!passwordValid) {
+      await auditLog({
+        adminId: admin.id,
+        action: AuditActions.LOGIN_FAILED,
+        resourceType: 'admin',
+        resourceId: admin.id,
+        newValues: { email, reason: 'Invalid password' },
+        req
+      });
       return res.status(401).json({ error: 'Неверный email или пароль' });
     }
 
@@ -31,11 +61,32 @@ async function login(req, res) {
       {
         id: admin.id,
         email: admin.email,
-        full_name: admin.full_name
+        full_name: admin.full_name,
+        role: admin.role || 'admin'
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+
+    // Обновляем last_login и last_login_ip
+    const ipAddress = req.headers['x-forwarded-for']?.split(',')[0]?.trim()
+      || req.headers['x-real-ip']
+      || req.ip
+      || null;
+
+    await db.query(
+      'UPDATE admins SET last_login = CURRENT_TIMESTAMP, last_login_ip = $1 WHERE id = $2',
+      [ipAddress, admin.id]
+    );
+
+    // Логируем успешный вход
+    await auditLog({
+      adminId: admin.id,
+      action: AuditActions.LOGIN_SUCCESS,
+      resourceType: 'admin',
+      resourceId: admin.id,
+      req
+    });
 
     res.json({
       success: true,
@@ -43,7 +94,8 @@ async function login(req, res) {
       admin: {
         id: admin.id,
         email: admin.email,
-        full_name: admin.full_name
+        full_name: admin.full_name,
+        role: admin.role || 'admin'
       }
     });
   } catch (error) {
@@ -97,6 +149,15 @@ async function changePassword(req, res) {
       'UPDATE admins SET password_hash = $1 WHERE id = $2',
       [newPasswordHash, userId]
     );
+
+    // Логируем смену пароля
+    await auditLog({
+      adminId: userId,
+      action: AuditActions.PASSWORD_CHANGE,
+      resourceType: 'admin',
+      resourceId: userId,
+      req
+    });
 
     res.json({ success: true, message: 'Пароль успешно изменен' });
   } catch (error) {

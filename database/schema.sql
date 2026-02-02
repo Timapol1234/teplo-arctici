@@ -16,9 +16,32 @@ CREATE TABLE IF NOT EXISTS admins (
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
   full_name VARCHAR(255),
+  role VARCHAR(20) DEFAULT 'admin',
+  is_active BOOLEAN DEFAULT TRUE,
+  last_login TIMESTAMP,
+  last_login_ip VARCHAR(45),
+  created_by INTEGER REFERENCES admins(id),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Таблица аудит логов
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id SERIAL PRIMARY KEY,
+  admin_id INTEGER REFERENCES admins(id),
+  action VARCHAR(50) NOT NULL,
+  resource_type VARCHAR(50),
+  resource_id INTEGER,
+  old_values JSONB,
+  new_values JSONB,
+  ip_address VARCHAR(45),
+  user_agent TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_logs_admin_id ON audit_logs(admin_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);
 
 -- Таблица целевых сборов
 CREATE TABLE IF NOT EXISTS campaigns (

@@ -1,5 +1,6 @@
 const db = require('../config/database');
 const { encryptEmail, decryptEmail } = require('../utils/crypto');
+const { auditLog, AuditActions } = require('../utils/auditLog');
 
 // Получить последние пожертвования для live-ленты
 async function getRecentDonations(req, res) {
@@ -98,6 +99,21 @@ async function createDonation(req, res) {
        RETURNING id, created_at`,
       [campaign_id, amount, encryptedEmail, is_anonymous || false, payment_method || 'manual']
     );
+
+    // Логируем создание пожертвования
+    await auditLog({
+      adminId: req.user?.id,
+      action: AuditActions.CREATE_DONATION,
+      resourceType: 'donation',
+      resourceId: result.rows[0].id,
+      newValues: {
+        amount,
+        campaign_id,
+        is_anonymous: is_anonymous || false,
+        payment_method: payment_method || 'manual'
+      },
+      req
+    });
 
     res.status(201).json({
       success: true,

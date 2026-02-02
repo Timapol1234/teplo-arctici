@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { auditLog, AuditActions } = require('../utils/auditLog');
 
 // Получить все активные сборы
 async function getActiveCampaigns(req, res) {
@@ -103,6 +104,16 @@ async function createCampaign(req, res) {
       [title, description, goal_amount, imageUrl, isActiveValue, end_date || null]
     );
 
+    // Логируем создание кампании
+    await auditLog({
+      adminId: req.user?.id,
+      action: AuditActions.CREATE_CAMPAIGN,
+      resourceType: 'campaign',
+      resourceId: result.rows[0].id,
+      newValues: { title, description, goal_amount, is_active: isActiveValue, image_url: imageUrl },
+      req
+    });
+
     res.status(201).json({
       success: true,
       campaign: {
@@ -122,14 +133,16 @@ async function updateCampaign(req, res) {
     const { id } = req.params;
     const { title, description, goal_amount, is_active, end_date } = req.body;
 
-    // Проверяем существование сбора
-    const checkResult = await db.query('SELECT id, image_url FROM campaigns WHERE id = $1', [id]);
+    // Проверяем существование сбора и получаем текущие данные для аудита
+    const checkResult = await db.query('SELECT * FROM campaigns WHERE id = $1', [id]);
     if (checkResult.rows.length === 0) {
       return res.status(404).json({ error: 'Сбор не найден' });
     }
 
+    const oldCampaign = checkResult.rows[0];
+
     // Получаем URL изображения
-    let imageUrl = checkResult.rows[0].image_url; // Сохраняем текущее по умолчанию
+    let imageUrl = oldCampaign.image_url; // Сохраняем текущее по умолчанию
     if (req.file && req.file.path) {
       imageUrl = req.file.path; // Новое изображение от Cloudinary
     } else if (req.body.image_url !== undefined) {
@@ -152,6 +165,23 @@ async function updateCampaign(req, res) {
        RETURNING *`,
       [title, description, goal_amount, imageUrl, isActive, end_date || null, id]
     );
+
+    // Логируем обновление кампании
+    await auditLog({
+      adminId: req.user?.id,
+      action: AuditActions.UPDATE_CAMPAIGN,
+      resourceType: 'campaign',
+      resourceId: parseInt(id),
+      oldValues: {
+        title: oldCampaign.title,
+        description: oldCampaign.description,
+        goal_amount: oldCampaign.goal_amount,
+        is_active: oldCampaign.is_active,
+        image_url: oldCampaign.image_url
+      },
+      newValues: { title, description, goal_amount, is_active: isActive, image_url: imageUrl },
+      req
+    });
 
     res.json({
       success: true,
@@ -200,11 +230,30 @@ async function deleteCampaign(req, res) {
   try {
     const { id } = req.params;
 
-    const result = await db.query('DELETE FROM campaigns WHERE id = $1 RETURNING id', [id]);
-
-    if (result.rows.length === 0) {
+    // Получаем данные кампании для аудита перед удалением
+    const checkResult = await db.query('SELECT * FROM campaigns WHERE id = $1', [id]);
+    if (checkResult.rows.length === 0) {
       return res.status(404).json({ error: 'Сбор не найден' });
     }
+
+    const oldCampaign = checkResult.rows[0];
+
+    const result = await db.query('DELETE FROM campaigns WHERE id = $1 RETURNING id', [id]);
+
+    // Логируем удаление кампании
+    await auditLog({
+      adminId: req.user?.id,
+      action: AuditActions.DELETE_CAMPAIGN,
+      resourceType: 'campaign',
+      resourceId: parseInt(id),
+      oldValues: {
+        title: oldCampaign.title,
+        description: oldCampaign.description,
+        goal_amount: oldCampaign.goal_amount,
+        current_amount: oldCampaign.current_amount
+      },
+      req
+    });
 
     res.json({ success: true, message: 'Сбор удален' });
   } catch (error) {

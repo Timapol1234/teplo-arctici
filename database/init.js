@@ -109,14 +109,14 @@ async function initDatabase() {
 
     const passwordHash = await bcrypt.hash(adminPassword, 12);
 
-    // Создаем или обновляем администратора
+    // Создаем или обновляем администратора с ролью super_admin
     await pool.query(
-      `INSERT INTO admins (email, password_hash, full_name)
-       VALUES ($1, $2, $3)
-       ON CONFLICT (email) DO UPDATE SET password_hash = $2, full_name = $3`,
-      [adminEmail, passwordHash, 'Администратор']
+      `INSERT INTO admins (email, password_hash, full_name, role, is_active)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (email) DO UPDATE SET password_hash = $2, full_name = $3, role = $4, is_active = $5`,
+      [adminEmail, passwordHash, 'Администратор', 'super_admin', true]
     );
-    console.log('✅ Администратор создан/обновлен');
+    console.log('✅ Супер-администратор создан/обновлен');
 
     console.log('');
     console.log('┌─────────────────────────────────────────────┐');
