@@ -61,45 +61,62 @@ async function loadCampaigns() {
       return;
     }
 
-    campaignsList.innerHTML = campaigns.map(campaign => `
-      <div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
-        <div class="h-48 overflow-hidden bg-slate-200">
+    campaignsList.innerHTML = campaigns.map((campaign, index) => `
+      <div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300" style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s both;">
+        <div class="h-48 overflow-hidden bg-slate-200 dark:bg-slate-800 relative">
           ${campaign.image_url ? `
             <img
               alt="${campaign.title}"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 campaign-img"
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 campaign-img"
               src="${campaign.image_url}"
+              loading="lazy"
             />
           ` : `
             <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
               <span class="material-symbols-outlined text-6xl text-primary/50">volunteer_activism</span>
             </div>
           `}
+          ${campaign.progress_percentage >= 100 ? `
+            <div class="absolute top-3 right-3 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+              Цель достигнута!
+            </div>
+          ` : ''}
         </div>
         <div class="p-5 flex flex-col flex-1">
-          <h3 class="text-lg font-bold mb-2">${campaign.title}</h3>
+          <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">${campaign.title}</h3>
           <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 line-clamp-2">
             ${campaign.description}
           </p>
           <div class="mt-auto">
             <div class="flex justify-between text-sm font-bold mb-2">
-              <span>Собрано ${campaign.progress_percentage}%</span>
-              <span class="text-primary">${formatNumber(campaign.current_amount)}₽ / ${formatNumber(campaign.goal_amount)}₽</span>
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-outlined text-base text-emerald-500">trending_up</span>
+                ${campaign.progress_percentage}%
+              </span>
+              <span class="text-primary">${formatNumber(campaign.current_amount)}₽ <span class="text-slate-400 font-normal">/ ${formatNumber(campaign.goal_amount)}₽</span></span>
             </div>
-            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full mb-6">
-              <div class="bg-primary h-full rounded-full transition-all duration-500" style="width: ${Math.min(campaign.progress_percentage, 100)}%"></div>
+            <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mb-6 overflow-hidden">
+              <div class="progress-bar bg-gradient-to-r from-primary to-blue-400 h-full rounded-full" style="width: 0%" data-progress="${Math.min(campaign.progress_percentage, 100)}"></div>
             </div>
             <button
               data-donate-campaign="${campaign.id}"
               data-campaign-title="${campaign.title.replace(/"/g, '&quot;')}"
-              class="w-full h-11 bg-primary/10 text-primary hover:bg-primary hover:text-white font-bold rounded-lg transition-all"
+              class="w-full h-11 bg-primary/10 text-primary hover:bg-primary hover:text-white font-bold rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
             >
+              <span class="material-symbols-outlined text-xl">favorite</span>
               Помочь
             </button>
           </div>
         </div>
       </div>
     `).join('');
+
+    // Анимация progress bars
+    setTimeout(() => {
+      document.querySelectorAll('.progress-bar[data-progress]').forEach(bar => {
+        bar.style.width = bar.dataset.progress + '%';
+      });
+    }, 100);
 
     // Привязываем обработчики для кнопок "Помочь"
     attachDonateButtons();
@@ -245,13 +262,94 @@ function toggleAnonymous(checkbox) {
   }
 }
 
+// Управление темой
+function initTheme() {
+  const html = document.documentElement;
+  const savedTheme = localStorage.getItem('theme');
+
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    html.classList.remove('light');
+    html.classList.add('dark');
+  } else {
+    html.classList.remove('dark');
+    html.classList.add('light');
+  }
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.classList.contains('dark');
+
+  if (isDark) {
+    html.classList.remove('dark');
+    html.classList.add('light');
+    localStorage.setItem('theme', 'light');
+  } else {
+    html.classList.remove('light');
+    html.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  }
+}
+
+// Мобильное меню
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const icon = document.getElementById('mobileMenuIcon');
+
+  if (menu.classList.contains('hidden')) {
+    menu.classList.remove('hidden');
+    icon.textContent = 'close';
+  } else {
+    menu.classList.add('hidden');
+    icon.textContent = 'menu';
+  }
+}
+
+// Scroll to top button
+function initScrollToTop() {
+  const scrollBtn = document.getElementById('scrollToTop');
+  if (!scrollBtn) return;
+
+  // Show/hide button based on scroll position
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 400) {
+      scrollBtn.classList.add('visible');
+    } else {
+      scrollBtn.classList.remove('visible');
+    }
+  });
+
+  // Scroll to top on click
+  scrollBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
+  // Инициализация темы
+  initTheme();
+
   loadStatistics();
   loadCampaigns();
 
   // Обновляем статистику каждые 30 секунд
   setInterval(loadStatistics, 30000);
+
+  // Обработчик переключения темы
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', toggleTheme);
+  }
+
+  // Обработчик мобильного меню
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+  }
+
+  // Инициализация scroll-to-top кнопки
+  initScrollToTop();
 
   // Обработчики модального окна
   const modal = document.getElementById('donation-modal');

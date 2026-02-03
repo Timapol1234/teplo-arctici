@@ -144,6 +144,49 @@
         .dark .ice-crystals {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M40 0v80M0 40h80M40 40l28.28-28.28M40 40l-28.28 28.28M40 40l28.28 28.28M40 40l-28.28-28.28' stroke='rgba(255,255,255,0.03)' stroke-width='1' fill='none'/%3E%3C/svg%3E");
         }
+
+        /* Skeleton Loading Animation */
+        .skeleton {
+            background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+        }
+        .dark .skeleton {
+            background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+            background-size: 200% 100%;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Progress bar animation */
+        .progress-bar {
+            transition: width 0.8s ease-out;
+        }
+
+        /* Scroll to top button */
+        .scroll-to-top {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Fade in up animation for cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-100 transition-colors duration-200">
@@ -181,10 +224,26 @@
                 <a class="text-sm font-semibold hover:text-primary transition-colors" href="/reports.html">Отчеты</a>
                 <a class="text-sm font-semibold hover:text-primary transition-colors" href="/about.html">О нас</a>
             </nav>
-            <button class="md:hidden p-2" id="mobileMenuBtn">
-                <span class="material-symbols-outlined">menu</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Сменить тему">
+                    <span class="material-symbols-outlined dark:hidden">dark_mode</span>
+                    <span class="material-symbols-outlined hidden dark:block">light_mode</span>
+                </button>
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" id="mobileMenuBtn">
+                    <span class="material-symbols-outlined" id="mobileMenuIcon">menu</span>
+                </button>
+            </div>
             <div class="hidden md:block w-[100px]"></div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-background-dark">
+            <nav class="flex flex-col py-4 px-4 space-y-1">
+                <a class="py-3 px-4 text-base font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/">Главная</a>
+                <a class="py-3 px-4 text-base font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/reports.html">Отчеты</a>
+                <a class="py-3 px-4 text-base font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/about.html">О нас</a>
+            </nav>
         </div>
     </header>
 
@@ -211,7 +270,15 @@
                         </div>
                     </div>
                     <div class="mt-12 w-full grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-4xl" id="heroStats">
-                        <!-- Статистика загружается из API -->
+                        <!-- Skeleton загрузки -->
+                        <div class="flex flex-col gap-2 rounded-xl p-6 bg-white/10 backdrop-blur-lg border border-white/10">
+                            <div class="skeleton h-4 w-24 rounded bg-white/20"></div>
+                            <div class="skeleton h-9 w-40 rounded bg-white/20 mt-1"></div>
+                        </div>
+                        <div class="flex flex-col gap-2 rounded-xl p-6 bg-white/10 backdrop-blur-lg border border-white/10">
+                            <div class="skeleton h-4 w-32 rounded bg-white/20"></div>
+                            <div class="skeleton h-9 w-24 rounded bg-white/20 mt-1"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -227,7 +294,31 @@
                     </a>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="campaignsList">
-                    <!-- Сборы загружаются из API -->
+                    <!-- Skeleton карточки сборов -->
+                    <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800">
+                        <div class="h-48 skeleton"></div>
+                        <div class="p-5 flex flex-col gap-3">
+                            <div class="skeleton h-6 w-3/4 rounded"></div>
+                            <div class="skeleton h-4 w-full rounded"></div>
+                            <div class="skeleton h-4 w-2/3 rounded"></div>
+                            <div class="mt-4">
+                                <div class="skeleton h-2 w-full rounded-full"></div>
+                            </div>
+                            <div class="skeleton h-11 w-full rounded-lg mt-2"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800">
+                        <div class="h-48 skeleton"></div>
+                        <div class="p-5 flex flex-col gap-3">
+                            <div class="skeleton h-6 w-3/4 rounded"></div>
+                            <div class="skeleton h-4 w-full rounded"></div>
+                            <div class="skeleton h-4 w-2/3 rounded"></div>
+                            <div class="mt-4">
+                                <div class="skeleton h-2 w-full rounded-full"></div>
+                            </div>
+                            <div class="skeleton h-11 w-full rounded-lg mt-2"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -245,7 +336,28 @@
                         <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Прямо сейчас</span>
                     </div>
                     <div class="flex flex-col p-4 max-h-[500px] overflow-y-auto" id="liveFeed">
-                        <!-- Live-лента загружается из API -->
+                        <!-- Skeleton элементы live-ленты -->
+                        <div class="flex items-center gap-3 p-3 rounded-lg">
+                            <div class="skeleton w-10 h-10 rounded-full flex-shrink-0"></div>
+                            <div class="flex-1 flex flex-col gap-2">
+                                <div class="skeleton h-4 w-3/4 rounded"></div>
+                                <div class="skeleton h-3 w-1/2 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-lg">
+                            <div class="skeleton w-10 h-10 rounded-full flex-shrink-0"></div>
+                            <div class="flex-1 flex flex-col gap-2">
+                                <div class="skeleton h-4 w-2/3 rounded"></div>
+                                <div class="skeleton h-3 w-1/3 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-lg">
+                            <div class="skeleton w-10 h-10 rounded-full flex-shrink-0"></div>
+                            <div class="flex-1 flex flex-col gap-2">
+                                <div class="skeleton h-4 w-1/2 rounded"></div>
+                                <div class="skeleton h-3 w-2/5 rounded"></div>
+                            </div>
+                        </div>
                     </div>
                     <button class="w-full py-4 text-sm font-bold text-slate-500 hover:text-primary transition-colors border-t border-[#e7edf3] dark:border-slate-800">
                         Смотреть всю историю транзакций
@@ -409,6 +521,11 @@
             </form>
         </div>
     </div>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTop" class="scroll-to-top fixed bottom-6 right-6 z-40 w-12 h-12 bg-primary text-white rounded-full shadow-lg shadow-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
+        <span class="material-symbols-outlined">keyboard_arrow_up</span>
+    </button>
 
     <script src="/js/main.js"></script>
     <script src="/js/liveFeed.js"></script>
