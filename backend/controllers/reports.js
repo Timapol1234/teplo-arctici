@@ -1,59 +1,58 @@
 const db = require('../config/database');
 const { auditLog, AuditActions } = require('../utils/auditLog');
 
-// Получить отчеты для конкретного сбора
+// Получить отчеты для конкретного сбора (оптимизировано: 1 запрос вместо 3)
 async function getReportsByCampaign(req, res) {
   try {
     const { campaignId } = req.params;
 
-    // Проверяем существование сбора
-    const campaignCheck = await db.query(
-      'SELECT id, title FROM campaigns WHERE id = $1',
-      [campaignId]
-    );
-
-    if (campaignCheck.rows.length === 0) {
-      return res.status(404).json({ error: 'Сбор не найден' });
-    }
-
+    // Один запрос: получаем кампанию, все отчёты и общую сумму
     const result = await db.query(
       `SELECT
+        c.id as campaign_id,
+        c.title as campaign_title,
         r.id,
         r.expense_date,
         r.amount,
         r.description,
         r.receipt_url,
         r.vendor_name,
-        r.created_at
-      FROM reports r
-      WHERE r.campaign_id = $1
-      ORDER BY r.expense_date DESC`,
+        r.created_at,
+        COALESCE(SUM(r.amount) OVER(), 0) as total_expenses
+      FROM campaigns c
+      LEFT JOIN reports r ON r.campaign_id = c.id
+      WHERE c.id = $1
+      ORDER BY r.expense_date DESC NULLS LAST`,
       [campaignId]
     );
 
-    const reports = result.rows.map(row => ({
-      id: row.id,
-      expense_date: row.expense_date,
-      amount: parseFloat(row.amount),
-      description: row.description,
-      receipt_url: row.receipt_url,
-      vendor_name: row.vendor_name,
-      created_at: row.created_at
-    }));
+    // Если кампания не найдена
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Сбор не найден' });
+    }
 
-    // Получаем общую сумму расходов
-    const totalResult = await db.query(
-      'SELECT COALESCE(SUM(amount), 0) as total FROM reports WHERE campaign_id = $1',
-      [campaignId]
-    );
+    const firstRow = result.rows[0];
+
+    // Формируем отчёты (фильтруем NULL если нет отчётов)
+    const reports = result.rows
+      .filter(row => row.id !== null)
+      .map(row => ({
+        id: row.id,
+        expense_date: row.expense_date,
+        amount: parseFloat(row.amount),
+        description: row.description,
+        receipt_url: row.receipt_url,
+        vendor_name: row.vendor_name,
+        created_at: row.created_at
+      }));
 
     res.json({
       campaign: {
-        id: campaignCheck.rows[0].id,
-        title: campaignCheck.rows[0].title
+        id: firstRow.campaign_id,
+        title: firstRow.campaign_title
       },
       reports,
-      total_expenses: parseFloat(totalResult.rows[0].total)
+      total_expenses: parseFloat(firstRow.total_expenses) || 0
     });
   } catch (error) {
     console.error('Ошибка при получении отчетов:', error);
@@ -216,20 +215,22 @@ async function updateReport(req, res) {
   }
 }
 
-// Удалить отчет (админ)
+// Удалить отчет (админ) - оптимизировано: 1 запрос вместо 2
 async function deleteReport(req, res) {
   try {
     const { id } = req.params;
 
-    // Получаем данные для аудита перед удалением
-    const checkResult = await db.query('SELECT * FROM reports WHERE id = $1', [id]);
-    if (checkResult.rows.length === 0) {
+    // Удаляем и получаем данные для аудита одним запросом
+    const result = await db.query(
+      'DELETE FROM reports WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Отчет не найден' });
     }
 
-    const oldReport = checkResult.rows[0];
-
-    await db.query('DELETE FROM reports WHERE id = $1', [id]);
+    const oldReport = result.rows[0];
 
     // Логируем удаление отчета
     await auditLog({

@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const { encryptEmail, decryptEmail } = require('../utils/crypto');
 const { auditLog, AuditActions } = require('../utils/auditLog');
+const { getOrSet, TTL, KEYS, invalidateOnDonation } = require('../utils/cache');
 
 // Получить последние пожертвования для live-ленты
 async function getRecentDonations(req, res) {
@@ -47,25 +48,31 @@ async function getRecentDonations(req, res) {
   }
 }
 
-// Получить статистику
+// Получить статистику (с кешированием)
 async function getStatistics(req, res) {
   try {
-    const result = await db.query(`
-      SELECT
-        COALESCE(SUM(amount), 0) as total_amount,
-        COUNT(DISTINCT CASE WHEN NOT is_anonymous THEN donor_email_encrypted END) as unique_donors,
-        COUNT(*) as total_donations
-      FROM donations
-      WHERE status = 'completed'
-    `);
+    const { data: stats, fromCache } = await getOrSet(
+      KEYS.STATISTICS,
+      async () => {
+        const result = await db.query(`
+          SELECT
+            COALESCE(SUM(amount), 0) as total_amount,
+            COUNT(DISTINCT CASE WHEN NOT is_anonymous THEN donor_email_encrypted END) as unique_donors,
+            COUNT(*) as total_donations
+          FROM donations
+          WHERE status = 'completed'
+        `);
+        const row = result.rows[0];
+        return {
+          total_amount: parseFloat(row.total_amount),
+          unique_donors: parseInt(row.unique_donors),
+          total_donations: parseInt(row.total_donations)
+        };
+      },
+      TTL.STATISTICS
+    );
 
-    const stats = result.rows[0];
-
-    res.json({
-      total_amount: parseFloat(stats.total_amount),
-      unique_donors: parseInt(stats.unique_donors),
-      total_donations: parseInt(stats.total_donations)
-    });
+    res.json(stats);
   } catch (error) {
     console.error('Ошибка при получении статистики:', error);
     res.status(500).json({ error: 'Ошибка сервера' });
@@ -114,6 +121,9 @@ async function createDonation(req, res) {
       },
       req
     });
+
+    // Инвалидируем кеш
+    invalidateOnDonation();
 
     res.status(201).json({
       success: true,
@@ -213,6 +223,9 @@ async function createPublicDonation(req, res) {
        RETURNING id, created_at`,
       [campaign_id, amount, encryptedEmail, is_anonymous || false]
     );
+
+    // Инвалидируем кеш
+    invalidateOnDonation();
 
     res.status(201).json({
       success: true,

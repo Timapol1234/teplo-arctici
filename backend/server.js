@@ -114,6 +114,22 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Cache stats endpoint (admin only in production)
+const { getStats: getCacheStats } = require('./utils/cache');
+app.get('/api/admin/cache-stats', adminLimiter, (req, res) => {
+  const stats = getCacheStats();
+  res.json({
+    hits: stats.hits,
+    misses: stats.misses,
+    keys: stats.keys,
+    ksize: stats.ksize,
+    vsize: stats.vsize,
+    hitRate: stats.hits + stats.misses > 0
+      ? ((stats.hits / (stats.hits + stats.misses)) * 100).toFixed(2) + '%'
+      : '0%'
+  });
+});
+
 // Обработка SPA маршрутов - возвращаем index.html для всех неизвестных путей
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));

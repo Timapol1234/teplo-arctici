@@ -29,13 +29,21 @@ describe('Reports Controller', () => {
   describe('getReportsByCampaign', () => {
     it('should return reports for specific campaign', async () => {
       mockReq.params = { campaignId: '1' };
-      const campaign = { id: 1, title: 'Test Campaign' };
-      const reports = [testData.report];
+      // Оптимизированный запрос возвращает все данные одним запросом
+      const joinedData = [{
+        campaign_id: 1,
+        campaign_title: 'Test Campaign',
+        id: testData.report.id,
+        expense_date: testData.report.expense_date,
+        amount: testData.report.amount,
+        description: testData.report.description,
+        receipt_url: testData.report.receipt_url,
+        vendor_name: testData.report.vendor_name,
+        created_at: testData.report.created_at,
+        total_expenses: '5000'
+      }];
 
-      db.query
-        .mockResolvedValueOnce(mockQueryResult([campaign]))
-        .mockResolvedValueOnce(mockQueryResult(reports))
-        .mockResolvedValueOnce(mockQueryResult([{ total: '5000' }]));
+      db.query.mockResolvedValue(mockQueryResult(joinedData));
 
       await reportsController.getReportsByCampaign(mockReq, mockRes);
 
@@ -60,10 +68,21 @@ describe('Reports Controller', () => {
 
     it('should return empty reports array for campaign without reports', async () => {
       mockReq.params = { campaignId: '1' };
-      db.query
-        .mockResolvedValueOnce(mockQueryResult([{ id: 1, title: 'Test' }]))
-        .mockResolvedValueOnce(mockQueryResult([]))
-        .mockResolvedValueOnce(mockQueryResult([{ total: '0' }]));
+      // Кампания без отчётов - LEFT JOIN вернёт строку с NULL в полях отчёта
+      const emptyResult = [{
+        campaign_id: 1,
+        campaign_title: 'Test',
+        id: null,
+        expense_date: null,
+        amount: null,
+        description: null,
+        receipt_url: null,
+        vendor_name: null,
+        created_at: null,
+        total_expenses: '0'
+      }];
+
+      db.query.mockResolvedValue(mockQueryResult(emptyResult));
 
       await reportsController.getReportsByCampaign(mockReq, mockRes);
 
@@ -78,8 +97,28 @@ describe('Reports Controller', () => {
   describe('getAllReports', () => {
     it('should return all reports with campaign info', async () => {
       const reports = [
-        { ...testData.report, campaign_title: 'Campaign 1', campaign_id: 1 },
-        { ...testData.report, id: 2, campaign_title: 'Campaign 2', campaign_id: 2 }
+        {
+          id: 1,
+          expense_date: '2024-01-15',
+          amount: '5000',
+          description: 'Test expense 1',
+          receipt_url: null,
+          vendor_name: 'Vendor 1',
+          created_at: new Date().toISOString(),
+          campaign_title: 'Campaign 1',
+          campaign_id: 1
+        },
+        {
+          id: 2,
+          expense_date: '2024-01-16',
+          amount: '3000',
+          description: 'Test expense 2',
+          receipt_url: null,
+          vendor_name: 'Vendor 2',
+          created_at: new Date().toISOString(),
+          campaign_title: 'Campaign 2',
+          campaign_id: 2
+        }
       ];
       db.query.mockResolvedValue(mockQueryResult(reports));
 
@@ -222,9 +261,8 @@ describe('Reports Controller', () => {
 
     it('should delete report', async () => {
       mockReq.params = { id: '1' };
-      db.query
-        .mockResolvedValueOnce(mockQueryResult([testData.report])) // Get report for audit
-        .mockResolvedValueOnce(mockQueryResult([])); // Delete
+      // Оптимизировано: один запрос DELETE RETURNING вместо SELECT + DELETE
+      db.query.mockResolvedValue(mockQueryResult([testData.report]));
 
       await reportsController.deleteReport(mockReq, mockRes);
 
@@ -233,6 +271,7 @@ describe('Reports Controller', () => {
 
     it('should return 404 if report not found', async () => {
       mockReq.params = { id: '999' };
+      // DELETE RETURNING возвращает пустой массив если запись не найдена
       db.query.mockResolvedValue(mockQueryResult([]));
 
       await reportsController.deleteReport(mockReq, mockRes);

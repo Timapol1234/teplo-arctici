@@ -193,9 +193,8 @@ describe('Campaigns Controller', () => {
   describe('deleteCampaign', () => {
     it('should delete campaign', async () => {
       mockReq.params = { id: '1' };
-      db.query
-        .mockResolvedValueOnce(mockQueryResult([testData.campaign])) // Get campaign for audit
-        .mockResolvedValueOnce(mockQueryResult([{ id: 1 }])); // Delete
+      // Оптимизировано: один запрос DELETE RETURNING вместо SELECT + DELETE
+      db.query.mockResolvedValue(mockQueryResult([testData.campaign]));
 
       await campaignsController.deleteCampaign(mockReq, mockRes);
 
@@ -204,6 +203,7 @@ describe('Campaigns Controller', () => {
 
     it('should return 404 if campaign not found', async () => {
       mockReq.params = { id: '999' };
+      // DELETE RETURNING возвращает пустой массив если запись не найдена
       db.query.mockResolvedValue(mockQueryResult([]));
 
       await campaignsController.deleteCampaign(mockReq, mockRes);

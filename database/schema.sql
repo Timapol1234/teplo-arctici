@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS daily_hashes (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Индексы для оптимизации запросов
+-- Индексы для оптимизации запросов (одиночные)
 CREATE INDEX IF NOT EXISTS idx_donations_campaign_id ON donations(campaign_id);
 CREATE INDEX IF NOT EXISTS idx_donations_created_at ON donations(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_donations_status ON donations(status);
@@ -103,6 +103,14 @@ CREATE INDEX IF NOT EXISTS idx_campaigns_is_active ON campaigns(is_active);
 CREATE INDEX IF NOT EXISTS idx_reports_campaign_id ON reports(campaign_id);
 CREATE INDEX IF NOT EXISTS idx_reports_expense_date ON reports(expense_date);
 CREATE INDEX IF NOT EXISTS idx_daily_hashes_date ON daily_hashes(date);
+
+-- Композитные индексы для оптимизации частых запросов
+CREATE INDEX IF NOT EXISTS idx_donations_status_created ON donations(status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_donations_campaign_status_created ON donations(campaign_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_campaigns_active_created ON campaigns(is_active, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_admin_created ON audit_logs(admin_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_reports_campaign_date ON reports(campaign_id, expense_date DESC);
+CREATE INDEX IF NOT EXISTS idx_admins_active_created ON admins(is_active, created_at DESC);
 
 -- Функция для автоматического обновления updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()

@@ -25,7 +25,14 @@ afterAll(() => {
   console.log = originalConsoleLog;
 });
 
-// Reset all mocks after each test
+// Clear cache and reset all mocks after each test
+const { flush: flushCache } = require('../../utils/cache');
 afterEach(() => {
   jest.clearAllMocks();
+  flushCache();
+});
+
+// Also clear before each test to ensure clean state
+beforeEach(() => {
+  flushCache();
 });
