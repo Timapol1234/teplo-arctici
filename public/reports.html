@@ -32,28 +32,30 @@
 <body class="bg-background-light dark:bg-background-dark min-h-screen">
     <header class="sticky top-0 z-50 w-full border-b border-[#e7edf3] dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 lg:px-20 py-3">
         <div class="max-w-[1200px] mx-auto flex items-center justify-between">
-            <a href="/" class="flex items-center gap-4">
-                <div class="size-8 text-primary">
-                    <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                        <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <h2 class="text-[#0d141b] dark:text-white text-xl font-black tracking-tight">Тепло Арктики</h2>
-            </a>
+            <div class="flex items-center gap-4">
+                <a href="/" class="flex items-center gap-4">
+                    <div class="size-8 text-primary">
+                        <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-[#0d141b] dark:text-white text-xl font-black tracking-tight">Тепло Арктики</h2>
+                </a>
+                <!-- Dark Mode Toggle -->
+                <button id="themeToggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Сменить тему">
+                    <span class="material-symbols-outlined dark:hidden">dark_mode</span>
+                    <span class="material-symbols-outlined hidden dark:block">light_mode</span>
+                </button>
+            </div>
             <nav class="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
                 <a class="text-sm font-semibold hover:text-primary transition-colors" href="/">Главная</a>
                 <a class="text-sm font-semibold text-primary transition-colors" href="/reports.html">Отчеты</a>
                 <a class="text-sm font-semibold hover:text-primary transition-colors" href="/about.html">О нас</a>
             </nav>
-            <div class="flex items-center gap-2">
-                <button id="themeToggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Сменить тему">
-                    <span class="material-symbols-outlined dark:hidden">dark_mode</span>
-                    <span class="material-symbols-outlined hidden dark:block">light_mode</span>
-                </button>
-                <button class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" id="mobileMenuBtn">
-                    <span class="material-symbols-outlined" id="mobileMenuIcon">menu</span>
-                </button>
-            </div>
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" id="mobileMenuBtn">
+                <span class="material-symbols-outlined" id="mobileMenuIcon">menu</span>
+            </button>
             <div class="hidden md:block w-[100px]"></div>
         </div>
         <div id="mobileMenu" class="hidden md:hidden border-t border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-background-dark">
