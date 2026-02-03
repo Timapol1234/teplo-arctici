@@ -83,8 +83,10 @@ function getStats() {
 // Инвалидация при изменении данных
 const invalidateOnDonation = () => {
   invalidate(KEYS.STATISTICS);
+  invalidate(KEYS.ACTIVE_CAMPAIGNS); // Явно инвалидируем активные кампании
   invalidatePattern('donations:recent');
   invalidatePattern('campaigns:'); // Обновляет current_amount в кампаниях
+  invalidatePattern('campaign:');  // Инвалидируем детали отдельных кампаний
 };
 
 const invalidateOnCampaign = (campaignId = null) => {
