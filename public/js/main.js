@@ -29,6 +29,8 @@ async function loadStatistics() {
     const data = await response.json();
 
     const heroStats = document.getElementById('heroStats');
+    if (!heroStats) return;
+
     heroStats.innerHTML = `
       <div class="flex flex-col gap-1 rounded-xl p-6 bg-white/10 backdrop-blur-lg border border-white/10 text-left">
         <p class="text-white/70 text-sm font-medium uppercase tracking-wider">Собрано всего</p>
