@@ -188,7 +188,7 @@
                     • Конкретному подразделению из представленного перечня<br>
                     • В общий фонд помощи направления 'СВО' (направление распределяется по решению Совета фонда на самые срочные нужды подразделений)
                 </p>
-                <div class="flex flex-col sm:flex-row gap-4">
+                <div class="mt-auto flex flex-col sm:flex-row gap-4">
                     <a href="#campaigns-svo" class="bg-[#3f4273] text-white px-8 py-4 rounded font-bold uppercase tracking-wider text-xs shadow-lg hover:bg-[#575a8c] transition-all text-center">
                         Поддержать героев региона
                     </a>
@@ -196,20 +196,8 @@
                         Узнать больше
                     </a>
                 </div>
-                <!-- Trust Badges -->
-                <div class="mt-8 flex items-center gap-6 opacity-60">
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-on-surface-variant">workspace_premium</span>
-                        <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Герои Севера</span>
-                    </div>
-                    <div class="w-px h-4 bg-slate-300"></div>
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-on-surface-variant">verified</span>
-                        <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Официальный фонд</span>
-                    </div>
-                </div>
                 <!-- Progress Bar -->
-                <div class="mt-4 flex flex-col items-start gap-2">
+                <div class="mt-6 flex flex-col items-start gap-2">
                     <div class="flex items-center gap-3">
                         <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Собрано средств всего:</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
@@ -226,7 +214,7 @@
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('/img/children-bg.jpg');"></div>
             <div class="absolute inset-0 arctic-gradient-right"></div>
             <div class="relative h-full flex flex-col px-8 md:px-12 lg:px-16 pt-16 md:pt-24 pb-16">
-                <div class="max-w-md md:ml-auto">
+                <div class="max-w-md md:ml-auto flex flex-col flex-1">
                     <div class="mb-6 flex items-center gap-4">
                         <div class="p-3 bg-white/40 backdrop-blur-md rounded-xl border border-[#ff8c00]/20">
                             <span class="material-symbols-outlined bg-gradient-to-br from-[#8a5100] via-[#d48806] to-[#ff8c00] bg-clip-text text-transparent text-3xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
@@ -240,7 +228,7 @@
                         • Конкретному ребёнку (выберите при переходе на следующую страницу по кнопке ниже — средства пойдут строго для него)<br>
                         • В общий фонд помощи направления 'Дети региона' (направление распределяется по решению Совета фонда на самые срочные нужды)
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="mt-auto flex flex-col sm:flex-row gap-4">
                         <a href="#campaigns-children" class="relative overflow-hidden bg-gradient-to-br from-[#ffbf00] via-[#ff8c00] to-[#e65100] text-white px-8 py-4 rounded font-bold uppercase tracking-wider text-xs shadow-xl shadow-orange-900/20 hover:brightness-110 transition-all text-center">
                             Помочь детям региона
                         </a>
@@ -249,7 +237,7 @@
                         </a>
                     </div>
                     <!-- Progress Bar -->
-                    <div class="mt-8 flex flex-col items-start gap-2">
+                    <div class="mt-6 flex flex-col items-start gap-2">
                         <div class="flex items-center gap-3">
                             <span class="text-[10px] uppercase font-bold tracking-widest text-tertiary">Собрано средств всего:</span>
                             <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
@@ -260,6 +248,18 @@
                         <span class="text-[11px] font-mono text-on-surface-variant" id="children-progress-text">720 000 ₽ из 1 000 000 ₽</span>
                     </div>
                 </div>
+            </div>
+        </div>
+        <!-- Trust Badges (Centered) -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-6 opacity-60 bg-white/60 backdrop-blur-md px-6 py-3 rounded-full">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-on-surface-variant">workspace_premium</span>
+                <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Герои Севера</span>
+            </div>
+            <div class="w-px h-4 bg-slate-300"></div>
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-on-surface-variant">verified</span>
+                <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Официальный фонд</span>
             </div>
         </div>
         <!-- Centered Floating Heart Badge (Desktop Only) -->
