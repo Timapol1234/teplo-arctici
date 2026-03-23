@@ -225,38 +225,40 @@
         <div class="relative flex-1 group overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('/img/children-bg.jpg');"></div>
             <div class="absolute inset-0 arctic-gradient-right"></div>
-            <div class="relative h-full flex flex-col px-8 md:px-12 lg:px-16 md:items-end pt-16 md:pt-24 pb-16">
-                <div class="mb-6 flex items-center gap-4">
-                    <div class="p-3 bg-white/40 backdrop-blur-md rounded-xl border border-[#ff8c00]/20">
-                        <span class="material-symbols-outlined bg-gradient-to-br from-[#8a5100] via-[#d48806] to-[#ff8c00] bg-clip-text text-transparent text-3xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+            <div class="relative h-full flex flex-col px-8 md:px-12 lg:px-16 pt-16 md:pt-24 pb-16">
+                <div class="max-w-md md:ml-auto">
+                    <div class="mb-6 flex items-center gap-4">
+                        <div class="p-3 bg-white/40 backdrop-blur-md rounded-xl border border-[#ff8c00]/20">
+                            <span class="material-symbols-outlined bg-gradient-to-br from-[#8a5100] via-[#d48806] to-[#ff8c00] bg-clip-text text-transparent text-3xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
+                        </div>
                     </div>
-                </div>
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6 leading-[0.9] text-glow bg-gradient-to-br from-[#8a5100] via-[#d48806] to-[#ff8c00] bg-clip-text text-transparent text-left">Помощь<br>детям<br>региона</h2>
-                <p class="text-on-surface-variant max-w-md mb-8 text-base leading-relaxed text-left">
-                    Срочная помощь детям Мурманской области. Операции, лечение, реабилитация —
-                    когда счёт идёт на дни.<br><br>
-                    Выберите, как помочь:<br>
-                    • Конкретному ребёнку (выберите при переходе на следующую страницу по кнопке ниже — средства пойдут строго для него)<br>
-                    • В общий фонд помощи направления 'Дети региона' (направление распределяется по решению Совета фонда на самые срочные нужды)
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="#campaigns-children" class="relative overflow-hidden bg-gradient-to-br from-[#ffbf00] via-[#ff8c00] to-[#e65100] text-white px-8 py-4 rounded font-bold uppercase tracking-wider text-xs shadow-xl shadow-orange-900/20 hover:brightness-110 transition-all text-center">
-                        Помочь детям региона
-                    </a>
-                    <a href="#" class="bg-white/60 backdrop-blur-md border border-slate-200 text-[#0d141b] px-8 py-4 rounded font-bold uppercase tracking-wider text-xs hover:bg-slate-100 transition-all text-center">
-                        Узнать больше
-                    </a>
-                </div>
-                <!-- Progress Bar -->
-                <div class="mt-8 flex flex-col items-start gap-2">
-                    <div class="flex items-center gap-3">
-                        <span class="text-[10px] uppercase font-bold tracking-widest text-tertiary">Собрано средств всего:</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6 leading-[0.9] text-glow bg-gradient-to-br from-[#8a5100] via-[#d48806] to-[#ff8c00] bg-clip-text text-transparent">Помощь<br>детям<br>региона</h2>
+                    <p class="text-on-surface-variant mb-8 text-base leading-relaxed">
+                        Срочная помощь детям Мурманской области. Операции, лечение, реабилитация —
+                        когда счёт идёт на дни.<br><br>
+                        Выберите, как помочь:<br>
+                        • Конкретному ребёнку (выберите при переходе на следующую страницу по кнопке ниже — средства пойдут строго для него)<br>
+                        • В общий фонд помощи направления 'Дети региона' (направление распределяется по решению Совета фонда на самые срочные нужды)
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#campaigns-children" class="relative overflow-hidden bg-gradient-to-br from-[#ffbf00] via-[#ff8c00] to-[#e65100] text-white px-8 py-4 rounded font-bold uppercase tracking-wider text-xs shadow-xl shadow-orange-900/20 hover:brightness-110 transition-all text-center">
+                            Помочь детям региона
+                        </a>
+                        <a href="#" class="bg-white/60 backdrop-blur-md border border-slate-200 text-[#0d141b] px-8 py-4 rounded font-bold uppercase tracking-wider text-xs hover:bg-slate-100 transition-all text-center">
+                            Узнать больше
+                        </a>
                     </div>
-                    <div class="w-48 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-tertiary to-on-tertiary-container w-[72%]"></div>
+                    <!-- Progress Bar -->
+                    <div class="mt-8 flex flex-col items-start gap-2">
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] uppercase font-bold tracking-widest text-tertiary">Собрано средств всего:</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                        </div>
+                        <div class="w-48 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-tertiary to-on-tertiary-container w-[72%]"></div>
+                        </div>
+                        <span class="text-[11px] font-mono text-on-surface-variant" id="children-progress-text">720 000 ₽ из 1 000 000 ₽</span>
                     </div>
-                    <span class="text-[11px] font-mono text-on-surface-variant" id="children-progress-text">720 000 ₽ из 1 000 000 ₽</span>
                 </div>
             </div>
         </div>
