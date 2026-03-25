@@ -306,11 +306,46 @@ async function deleteCampaign(req, res) {
   }
 }
 
+// Статистика по категории (суммы current_amount и goal_amount)
+async function getCategoryStats(req, res) {
+  try {
+    const { data: stats } = await getOrSet(
+      'campaigns:category_stats',
+      async () => {
+        const result = await db.query(`
+          SELECT
+            category,
+            COALESCE(SUM(current_amount), 0) as total_current,
+            COALESCE(SUM(goal_amount), 0) as total_goal
+          FROM campaigns
+          WHERE is_active = true
+          GROUP BY category
+        `);
+        const map = {};
+        for (const row of result.rows) {
+          map[row.category] = {
+            current: parseFloat(row.total_current),
+            goal: parseFloat(row.total_goal)
+          };
+        }
+        return map;
+      },
+      TTL.CAMPAIGNS
+    );
+
+    res.json(stats);
+  } catch (error) {
+    console.error('Ошибка при получении статистики категорий:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+}
+
 module.exports = {
   getActiveCampaigns,
   getCampaignById,
   createCampaign,
   updateCampaign,
   getAllCampaigns,
-  deleteCampaign
+  deleteCampaign,
+  getCategoryStats
 };

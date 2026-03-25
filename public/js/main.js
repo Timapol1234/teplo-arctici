@@ -327,6 +327,36 @@ function initScrollToTop() {
   });
 }
 
+// Загрузка прогресса по категориям (СВО и Дети)
+async function loadCategoryProgress() {
+  try {
+    const response = await fetch(`${API_BASE}/campaigns/category-stats`);
+    const stats = await response.json();
+
+    // СВО
+    const svoBar = document.getElementById('svo-progress-bar');
+    const svoText = document.getElementById('svo-progress-text');
+    if (svoBar && svoText) {
+      const svo = stats.svo || { current: 0, goal: 0 };
+      const svoPct = svo.goal > 0 ? Math.min(Math.round((svo.current / svo.goal) * 100), 100) : 0;
+      svoBar.style.width = svoPct + '%';
+      svoText.textContent = `${formatNumber(svo.current)} ₽ из ${formatNumber(svo.goal)} ₽`;
+    }
+
+    // Дети
+    const childrenBar = document.getElementById('children-progress-bar');
+    const childrenText = document.getElementById('children-progress-text');
+    if (childrenBar && childrenText) {
+      const children = stats.children || { current: 0, goal: 0 };
+      const childrenPct = children.goal > 0 ? Math.min(Math.round((children.current / children.goal) * 100), 100) : 0;
+      childrenBar.style.width = childrenPct + '%';
+      childrenText.textContent = `${formatNumber(children.current)} ₽ из ${formatNumber(children.goal)} ₽`;
+    }
+  } catch (error) {
+    console.error('Ошибка при загрузке прогресса категорий:', error);
+  }
+}
+
 // Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   // Инициализация темы
@@ -334,9 +364,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadStatistics();
   loadCampaigns();
+  loadCategoryProgress();
 
   // Обновляем статистику каждые 30 секунд
   setInterval(loadStatistics, 30000);
+  setInterval(loadCategoryProgress, 30000);
 
   // Обработчик переключения темы
   const themeToggle = document.getElementById('themeToggle');

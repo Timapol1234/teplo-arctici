@@ -11,6 +11,7 @@ router.get('/donations/statistics', donationsController.getStatistics);
 router.post('/donations', validatePublicDonation, donationsController.createPublicDonation);
 
 // Campaigns
+router.get('/campaigns/category-stats', campaignsController.getCategoryStats);
 router.get('/campaigns', campaignsController.getActiveCampaigns);
 router.get('/campaigns/:id', campaignsController.getCampaignById);
 
