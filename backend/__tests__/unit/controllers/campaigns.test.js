@@ -37,7 +37,7 @@ describe('Campaigns Controller', () => {
 
       await campaignsController.getActiveCampaigns(mockReq, mockRes);
 
-      expect(db.query).toHaveBeenCalledWith(expect.stringContaining('is_active = true'));
+      expect(db.query).toHaveBeenCalledWith(expect.stringContaining('is_active = true'), []);
       expect(mockRes.json).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ id: 1, progress_percentage: 50 }),

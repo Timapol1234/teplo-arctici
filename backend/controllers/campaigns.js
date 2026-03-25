@@ -3,19 +3,23 @@ const { auditLog, AuditActions } = require('../utils/auditLog');
 const { getOrSet, TTL, KEYS, invalidateOnCampaign } = require('../utils/cache');
 
 // Получить все активные сборы (с кешированием)
+// Поддержка ?category=svo|children|general для фильтрации
 async function getActiveCampaigns(req, res) {
   try {
+    const category = req.query.category;
+    const cacheKey = category ? `${KEYS.ACTIVE_CAMPAIGNS}:${category}` : KEYS.ACTIVE_CAMPAIGNS;
+
     const { data: campaigns } = await getOrSet(
-      KEYS.ACTIVE_CAMPAIGNS,
+      cacheKey,
       async () => {
-        const result = await db.query(
-          `SELECT
+        let query = `SELECT
             id,
             title,
             description,
             goal_amount,
             current_amount,
             image_url,
+            category,
             end_date,
             created_at,
             CASE
@@ -23,9 +27,17 @@ async function getActiveCampaigns(req, res) {
               ELSE 0
             END as progress_percentage
           FROM campaigns
-          WHERE is_active = true
-          ORDER BY created_at DESC`
-        );
+          WHERE is_active = true`;
+        const params = [];
+
+        if (category) {
+          params.push(category);
+          query += ` AND category = $${params.length}`;
+        }
+
+        query += ` ORDER BY created_at DESC`;
+
+        const result = await db.query(query, params);
 
         return result.rows.map(row => ({
           id: row.id,
@@ -34,6 +46,7 @@ async function getActiveCampaigns(req, res) {
           goal_amount: parseFloat(row.goal_amount),
           current_amount: parseFloat(row.current_amount),
           image_url: row.image_url,
+          category: row.category,
           end_date: row.end_date,
           created_at: row.created_at,
           progress_percentage: parseInt(row.progress_percentage)
@@ -62,6 +75,7 @@ async function getCampaignById(req, res) {
         goal_amount,
         current_amount,
         image_url,
+        category,
         is_active,
         end_date,
         created_at,
@@ -92,7 +106,7 @@ async function getCampaignById(req, res) {
 // Создать новый сбор (админ)
 async function createCampaign(req, res) {
   try {
-    const { title, description, goal_amount, is_active, end_date } = req.body;
+    const { title, description, goal_amount, is_active, end_date, category } = req.body;
 
     // Получаем URL изображения: из Cloudinary или из body
     let imageUrl = req.body.image_url || null;
@@ -103,12 +117,16 @@ async function createCampaign(req, res) {
     // Конвертируем is_active в boolean для PostgreSQL
     const isActiveValue = is_active !== false && is_active !== 'false';
 
+    // Валидация категории
+    const validCategories = ['svo', 'children', 'general'];
+    const categoryValue = validCategories.includes(category) ? category : 'general';
+
     const result = await db.query(
       `INSERT INTO campaigns
-       (title, description, goal_amount, image_url, is_active, end_date)
-       VALUES ($1, $2, $3, $4, $5, $6)
+       (title, description, goal_amount, image_url, is_active, end_date, category)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING id, created_at`,
-      [title, description, goal_amount, imageUrl, isActiveValue, end_date || null]
+      [title, description, goal_amount, imageUrl, isActiveValue, end_date || null, categoryValue]
     );
 
     // Логируем создание кампании
@@ -117,7 +135,7 @@ async function createCampaign(req, res) {
       action: AuditActions.CREATE_CAMPAIGN,
       resourceType: 'campaign',
       resourceId: result.rows[0].id,
-      newValues: { title, description, goal_amount, is_active: isActiveValue, image_url: imageUrl },
+      newValues: { title, description, goal_amount, is_active: isActiveValue, image_url: imageUrl, category: categoryValue },
       req
     });
 
@@ -141,7 +159,7 @@ async function createCampaign(req, res) {
 async function updateCampaign(req, res) {
   try {
     const { id } = req.params;
-    const { title, description, goal_amount, is_active, end_date } = req.body;
+    const { title, description, goal_amount, is_active, end_date, category } = req.body;
 
     // Проверяем существование сбора и получаем текущие данные для аудита
     const checkResult = await db.query('SELECT * FROM campaigns WHERE id = $1', [id]);
@@ -162,6 +180,12 @@ async function updateCampaign(req, res) {
     // Конвертируем is_active в boolean
     const isActive = is_active !== false && is_active !== 'false';
 
+    // Валидация категории
+    const validCategories = ['svo', 'children', 'general'];
+    const categoryValue = category !== undefined
+      ? (validCategories.includes(category) ? category : oldCampaign.category)
+      : oldCampaign.category;
+
     const result = await db.query(
       `UPDATE campaigns
        SET
@@ -170,10 +194,11 @@ async function updateCampaign(req, res) {
          goal_amount = COALESCE($3, goal_amount),
          image_url = $4,
          is_active = $5,
-         end_date = $6
+         end_date = $6,
+         category = $8
        WHERE id = $7
        RETURNING *`,
-      [title, description, goal_amount, imageUrl, isActive, end_date || null, id]
+      [title, description, goal_amount, imageUrl, isActive, end_date || null, id, categoryValue]
     );
 
     // Логируем обновление кампании
@@ -217,6 +242,7 @@ async function getAllCampaigns(req, res) {
         goal_amount,
         current_amount,
         image_url,
+        category,
         is_active,
         end_date,
         created_at,

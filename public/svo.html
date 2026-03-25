@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html class="light" lang="ru">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Помощь защитникам региона - Тепло Арктики</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "on-surface": "#1b1d39",
+                        "on-surface-variant": "#46464f",
+                        "surface-container-highest": "#e3e3eb",
+                        "outline-variant": "#c7c5d0",
+                        "secondary": "#005dbd",
+                        "secondary-container": "#4a8eff",
+                        "svo-primary": "#3f4273",
+                        "svo-light": "#575a8c",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+        }
+        .dark .skeleton {
+            background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+            background-size: 200% 100%;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .progress-bar {
+            transition: width 0.8s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scroll-to-top {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#0d141b] dark:text-slate-100 transition-colors duration-200">
+    <header class="sticky top-0 z-50 w-full border-b border-solid border-[#e7edf3] dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-4 lg:px-20 py-3">
+        <div class="max-w-[1200px] mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <img src="/img/krasn.png" alt="Герб" class="h-9 w-auto object-contain" />
+                <h2 class="text-[#0d141b] dark:text-white text-xl font-black tracking-tight">Тепло Арктики</h2>
+            </a>
+            <nav class="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/">Главная</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/reports.html">Отчеты</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors" href="/about.html">О нас</a>
+            </nav>
+            <div class="flex items-center gap-2">
+                <button class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" id="mobileMenuBtn">
+                    <span class="material-symbols-outlined" id="mobileMenuIcon">menu</span>
+                </button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden border-t border-[#e7edf3] dark:border-slate-800 bg-white dark:bg-background-dark">
+            <nav class="flex flex-col py-4 px-4 space-y-1">
+                <a class="py-3 px-4 text-base font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/">Главная</a>
+                <a class="py-3 px-4 text-base font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/reports.html">Отчеты</a>
+                <a class="py-3 px-4 text-base font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="/about.html">О нас</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative w-full min-h-[360px] md:min-h-[420px] overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('/img/svo-bg.jpg');"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#3f4273]/90 via-[#3f4273]/70 to-transparent"></div>
+        <div class="relative z-10 h-full min-h-[360px] md:min-h-[420px] flex flex-col justify-center px-6 md:px-12 lg:px-20">
+            <div class="max-w-[1200px] mx-auto w-full">
+                <div class="flex items-center gap-3 mb-4">
+                    <a href="/" class="text-white/70 hover:text-white text-sm font-medium transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Главная
+                    </a>
+                    <span class="text-white/40">/</span>
+                    <span class="text-white text-sm font-medium">Помощь защитникам</span>
+                </div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="p-3 bg-white/20 backdrop-blur-md rounded-xl">
+                        <span class="material-symbols-outlined text-3xl text-white">shield</span>
+                    </div>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-white leading-[0.95] mb-6">
+                    Помощь защитникам<br>региона
+                </h1>
+                <p class="text-white/80 max-w-xl text-base md:text-lg leading-relaxed">
+                    Поддержите тех, кто прямо сейчас защищает нашу Родину.
+                    Адресная помощь участникам СВО и ветеранам Мурманской области.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="bg-white dark:bg-slate-900 border-b border-[#e7edf3] dark:border-slate-800">
+        <div class="max-w-[1200px] mx-auto px-4 lg:px-10 py-10">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-svo-primary/10 rounded-xl flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl text-svo-primary">target</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm mb-1">Адресная помощь</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Выберите конкретное подразделение из перечня ниже — средства пойдут строго на его нужды.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-svo-primary/10 rounded-xl flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl text-svo-primary">diversity_3</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm mb-1">Общий фонд СВО</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Или помогите через общий фонд — распределение по решению Совета фонда на самые срочные нужды.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-svo-primary/10 rounded-xl flex-shrink-0">
+                        <span class="material-symbols-outlined text-2xl text-svo-primary">verified</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm mb-1">Полная прозрачность</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                            Каждая транзакция записывается в системе. Отчёты по расходам доступны всем.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campaigns Section -->
+    <main class="max-w-[1200px] mx-auto px-4 lg:px-10 py-10">
+        <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-bold tracking-tight">Активные сборы</h2>
+            <div class="flex items-center gap-2 text-sm text-slate-500">
+                <span class="material-symbols-outlined text-base">shield</span>
+                Направление: Помощь защитникам
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="campaignsList">
+            <!-- Skeleton -->
+            <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800">
+                <div class="h-48 skeleton"></div>
+                <div class="p-5 flex flex-col gap-3">
+                    <div class="skeleton h-6 w-3/4 rounded"></div>
+                    <div class="skeleton h-4 w-full rounded"></div>
+                    <div class="skeleton h-4 w-2/3 rounded"></div>
+                    <div class="mt-4"><div class="skeleton h-2 w-full rounded-full"></div></div>
+                    <div class="skeleton h-11 w-full rounded-lg mt-2"></div>
+                </div>
+            </div>
+            <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800">
+                <div class="h-48 skeleton"></div>
+                <div class="p-5 flex flex-col gap-3">
+                    <div class="skeleton h-6 w-3/4 rounded"></div>
+                    <div class="skeleton h-4 w-full rounded"></div>
+                    <div class="skeleton h-4 w-2/3 rounded"></div>
+                    <div class="mt-4"><div class="skeleton h-2 w-full rounded-full"></div></div>
+                    <div class="skeleton h-11 w-full rounded-lg mt-2"></div>
+                </div>
+            </div>
+            <div class="flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800">
+                <div class="h-48 skeleton"></div>
+                <div class="p-5 flex flex-col gap-3">
+                    <div class="skeleton h-6 w-3/4 rounded"></div>
+                    <div class="skeleton h-4 w-full rounded"></div>
+                    <div class="skeleton h-4 w-2/3 rounded"></div>
+                    <div class="mt-4"><div class="skeleton h-2 w-full rounded-full"></div></div>
+                    <div class="skeleton h-11 w-full rounded-lg mt-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <span class="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-700 mb-4">shield</span>
+            <h3 class="text-xl font-bold text-slate-400 dark:text-slate-500 mb-2">Пока нет активных сборов</h3>
+            <p class="text-sm text-slate-400 dark:text-slate-600">Новые сборы появятся здесь в ближайшее время</p>
+        </div>
+    </main>
+
+    <!-- Модальное окно пожертвования -->
+    <div id="donation-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-w-md w-full overflow-hidden">
+            <div class="bg-svo-primary p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-white/80 text-sm font-medium">Пожертвование на сбор</p>
+                        <h3 id="modal-campaign-title" class="text-xl font-bold mt-1">Название сбора</h3>
+                    </div>
+                    <button id="close-donation-modal" class="p-2 hover:bg-white/20 rounded-lg transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+            <form id="donation-form" class="p-6 space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Сумма пожертвования</label>
+                    <div class="relative">
+                        <input type="number" name="amount" id="donation-amount" min="100" required
+                            class="w-full h-14 pl-4 pr-12 text-2xl font-bold rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-svo-primary focus:ring-0 outline-none"
+                            placeholder="500" />
+                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xl font-bold text-slate-400">&#8381;</span>
+                    </div>
+                    <div class="flex gap-2 mt-3" id="amount-presets">
+                        <button type="button" data-amount="100" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">100&#8381;</button>
+                        <button type="button" data-amount="500" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">500&#8381;</button>
+                        <button type="button" data-amount="1000" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">1000&#8381;</button>
+                        <button type="button" data-amount="5000" class="flex-1 py-2 text-sm font-bold bg-slate-100 dark:bg-slate-800 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">5000&#8381;</button>
+                    </div>
+                </div>
+                <label class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-xl cursor-pointer">
+                    <input type="checkbox" name="is_anonymous" id="is-anonymous"
+                        class="w-5 h-5 rounded border-slate-300 text-svo-primary focus:ring-svo-primary" />
+                    <div>
+                        <p class="font-semibold text-sm">Анонимное пожертвование</p>
+                        <p class="text-xs text-slate-500">Ваше имя не будет отображаться в ленте</p>
+                    </div>
+                </label>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Ваше имя (необязательно)</label>
+                    <input type="text" name="donor_name" id="donor-name"
+                        class="w-full h-12 px-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-svo-primary focus:ring-0 outline-none"
+                        placeholder="Иван Иванов" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Email (необязательно)</label>
+                    <input type="email" name="donor_email" id="donor-email"
+                        class="w-full h-12 px-4 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-svo-primary focus:ring-0 outline-none"
+                        placeholder="email@example.com" />
+                    <p class="text-xs text-slate-500 mt-1">Для получения благодарности и отчёта</p>
+                </div>
+                <div id="donation-error" class="hidden p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm"></div>
+                <div id="donation-success" class="hidden p-4 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-xl"></div>
+                <button type="submit"
+                    class="w-full h-14 bg-svo-primary hover:bg-svo-light text-white text-lg font-bold rounded-xl shadow-lg shadow-svo-primary/30 transition-all">
+                    Пожертвовать
+                </button>
+                <p class="text-xs text-center text-slate-400">Нажимая кнопку, вы соглашаетесь с условиями использования</p>
+            </form>
+        </div>
+    </div>
+
+    <footer class="mt-20 border-t border-[#e7edf3] dark:border-slate-800 py-12 px-4 lg:px-20 bg-white dark:bg-slate-950">
+        <div class="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="col-span-1 md:col-span-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="size-6 text-primary">
+                        <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-[#0d141b] dark:text-white text-lg font-black tracking-tight">Тепло Арктики</h2>
+                </div>
+                <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Благотворительный фонд, стремящийся к процветанию арктических регионов и их жителей.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Навигация</h4>
+                <ul class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <li><a class="hover:text-primary" href="/">Главная</a></li>
+                    <li><a class="hover:text-primary" href="/svo.html">Помощь защитникам</a></li>
+                    <li><a class="hover:text-primary" href="/children.html">Помощь детям</a></li>
+                    <li><a class="hover:text-primary" href="/reports.html">Отчеты</a></li>
+                    <li><a class="hover:text-primary" href="/about.html">О нас</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Прозрачность</h4>
+                <ul class="flex flex-col gap-2 text-sm text-slate-500 dark:text-slate-400">
+                    <li><a class="hover:text-primary" href="#">Проверка транзакций</a></li>
+                    <li><a class="hover:text-primary" href="/reports.html">Финансовая отчетность</a></li>
+                    <li><a class="hover:text-primary" href="/about.html">О фонде</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-sm mb-4 uppercase tracking-wider">Связь</h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">Email: info@teplo-arctici.ru</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Телефон: +7 (495) 123-45-67</p>
+            </div>
+        </div>
+        <div class="max-w-[1200px] mx-auto mt-12 pt-8 border-t border-slate-100 dark:border-slate-900">
+            <p class="text-xs text-slate-400 uppercase tracking-widest text-center mb-6">При поддержке</p>
+            <div class="flex flex-wrap items-center justify-center gap-8 md:gap-12 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+                <img src="/img/krasn.png" alt="Герб Мурманской области" class="h-14 md:h-16 w-auto object-contain" />
+                <img src="/img/myrmansk.png" alt="Герб Мурманска" class="h-14 md:h-16 w-auto object-contain" />
+                <img src="/img/geroi-severa.png" alt="Герои Севера" class="h-10 md:h-12 w-auto object-contain" />
+                <img src="/img/z.png" alt="Z" class="h-12 md:h-14 w-auto object-contain" />
+                <img src="/img/na-severe.png" alt="На Севере — Жить!" class="h-8 md:h-10 w-auto object-contain" />
+            </div>
+        </div>
+        <div class="max-w-[1200px] mx-auto mt-8 pt-8 border-t border-slate-100 dark:border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+            <p>&copy; 2026 Тепло Арктики. Все права защищены.</p>
+            <div class="flex gap-6">
+                <a class="hover:text-primary" href="/privacy.html">Политика конфиденциальности</a>
+                <a class="hover:text-primary" href="/terms.html">Условия использования</a>
+            </div>
+        </div>
+    </footer>
+
+    <button id="scrollToTop" class="scroll-to-top fixed bottom-6 right-6 z-40 w-12 h-12 bg-svo-primary text-white rounded-full shadow-lg shadow-svo-primary/30 flex items-center justify-center hover:scale-110 transition-transform">
+        <span class="material-symbols-outlined">keyboard_arrow_up</span>
+    </button>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        const CATEGORY = 'svo';
+
+        const formatNumber = (num) => new Intl.NumberFormat('ru-RU').format(num);
+
+        // Загрузка сборов по категории
+        async function loadCampaigns() {
+            try {
+                const response = await fetch(`${API_BASE}/campaigns?category=${CATEGORY}`);
+                const campaigns = await response.json();
+                const campaignsList = document.getElementById('campaignsList');
+                const emptyState = document.getElementById('emptyState');
+
+                if (campaigns.length === 0) {
+                    campaignsList.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                    return;
+                }
+
+                emptyState.classList.add('hidden');
+                campaignsList.innerHTML = campaigns.map((campaign, index) => `
+                    <div class="group flex flex-col bg-white dark:bg-slate-900 rounded-xl overflow-hidden border border-[#e7edf3] dark:border-slate-800 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300" style="animation: fadeInUp 0.5s ease-out ${index * 0.1}s both;">
+                        <div class="h-48 overflow-hidden bg-slate-200 dark:bg-slate-800 relative">
+                            ${campaign.image_url ? `
+                                <img alt="${campaign.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 campaign-img" src="${campaign.image_url}" loading="lazy" />
+                            ` : `
+                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-svo-primary/20 to-svo-primary/5">
+                                    <span class="material-symbols-outlined text-6xl text-svo-primary/50">shield</span>
+                                </div>
+                            `}
+                            ${campaign.progress_percentage >= 100 ? `
+                                <div class="absolute top-3 right-3 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">Цель достигнута!</div>
+                            ` : ''}
+                        </div>
+                        <div class="p-5 flex flex-col flex-1">
+                            <h3 class="text-lg font-bold mb-2 group-hover:text-svo-primary transition-colors">${campaign.title}</h3>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 line-clamp-2">${campaign.description}</p>
+                            <div class="mt-auto">
+                                <div class="flex justify-between text-sm font-bold mb-2">
+                                    <span class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-base text-emerald-500">trending_up</span>
+                                        ${campaign.progress_percentage}%
+                                    </span>
+                                    <span class="text-svo-primary">${formatNumber(campaign.current_amount)}&#8381; <span class="text-slate-400 font-normal">/ ${formatNumber(campaign.goal_amount)}&#8381;</span></span>
+                                </div>
+                                <div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mb-6 overflow-hidden">
+                                    <div class="progress-bar bg-gradient-to-r from-svo-primary to-svo-light h-full rounded-full" style="width: 0%" data-progress="${Math.min(campaign.progress_percentage, 100)}"></div>
+                                </div>
+                                <button data-donate-campaign="${campaign.id}" data-campaign-title="${campaign.title.replace(/"/g, '&quot;')}"
+                                    class="w-full h-11 bg-svo-primary/10 text-svo-primary hover:bg-svo-primary hover:text-white font-bold rounded-lg transition-all duration-300 flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-xl">favorite</span>
+                                    Помочь
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Анимация progress bars
+                setTimeout(() => {
+                    document.querySelectorAll('.progress-bar[data-progress]').forEach(bar => {
+                        bar.style.width = bar.dataset.progress + '%';
+                    });
+                }, 100);
+
+                attachDonateButtons();
+                attachImageErrorHandlers();
+            } catch (error) {
+                console.error('Ошибка при загрузке сборов:', error);
+                document.getElementById('campaignsList').innerHTML = `
+                    <div class="col-span-3 text-center py-8 text-slate-500">
+                        Ошибка при загрузке сборов. Попробуйте обновить страницу.
+                    </div>
+                `;
+            }
+        }
+
+        // Модальное окно
+        let selectedCampaignId = null;
+
+        function showDonationModal(campaignId, campaignTitle) {
+            selectedCampaignId = campaignId;
+            document.getElementById('modal-campaign-title').textContent = campaignTitle;
+            document.getElementById('donation-modal').classList.remove('hidden');
+            document.getElementById('donation-amount').focus();
+        }
+
+        function hideDonationModal() {
+            document.getElementById('donation-modal').classList.add('hidden');
+            document.getElementById('donation-form').reset();
+            document.getElementById('donation-error').classList.add('hidden');
+            document.getElementById('donation-success').classList.add('hidden');
+            selectedCampaignId = null;
+        }
+
+        function attachDonateButtons() {
+            document.querySelectorAll('[data-donate-campaign]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    showDonationModal(parseInt(btn.dataset.donateCampaign), btn.dataset.campaignTitle);
+                });
+            });
+        }
+
+        function attachImageErrorHandlers() {
+            document.querySelectorAll('.campaign-img').forEach(img => {
+                img.addEventListener('error', () => { img.style.display = 'none'; });
+            });
+        }
+
+        async function handleDonationSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const errorDiv = document.getElementById('donation-error');
+            const successDiv = document.getElementById('donation-success');
+
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+
+            const amount = parseFloat(form.amount.value);
+            const donorName = form.donor_name.value.trim();
+            const donorEmail = form.donor_email.value.trim();
+            const isAnonymous = form.is_anonymous.checked;
+
+            if (amount < 100) {
+                errorDiv.textContent = 'Минимальная сумма пожертвования — 100₽';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="animate-pulse">Обработка...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/donations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        campaign_id: selectedCampaignId,
+                        amount,
+                        donor_name: isAnonymous ? null : donorName,
+                        donor_email: isAnonymous ? null : donorEmail,
+                        is_anonymous: isAnonymous
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.errors ? data.errors.map(e => e.msg).join(', ') : data.error || 'Ошибка сервера');
+                }
+
+                successDiv.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-green-500">check_circle</span>
+                        <div>
+                            <p class="font-bold">Спасибо за ваше пожертвование!</p>
+                            <p class="text-sm text-slate-600">Сумма ${formatNumber(amount)}₽ добавлена к сбору.</p>
+                        </div>
+                    </div>
+                `;
+                successDiv.classList.remove('hidden');
+                form.reset();
+                loadCampaigns();
+                setTimeout(hideDonationModal, 3000);
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Пожертвовать';
+            }
+        }
+
+        function toggleAnonymous(checkbox) {
+            const nameInput = document.getElementById('donor-name');
+            const emailInput = document.getElementById('donor-email');
+            nameInput.disabled = checkbox.checked;
+            emailInput.disabled = checkbox.checked;
+            if (checkbox.checked) { nameInput.value = ''; emailInput.value = ''; }
+        }
+
+        function initTheme() {
+            const html = document.documentElement;
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.remove('light'); html.classList.add('dark');
+            } else {
+                html.classList.remove('dark'); html.classList.add('light');
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const icon = document.getElementById('mobileMenuIcon');
+            menu.classList.toggle('hidden');
+            icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
+        }
+
+        function initScrollToTop() {
+            const scrollBtn = document.getElementById('scrollToTop');
+            if (!scrollBtn) return;
+            window.addEventListener('scroll', () => {
+                scrollBtn.classList.toggle('visible', window.scrollY > 400);
+            });
+            scrollBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            loadCampaigns();
+
+            document.getElementById('mobileMenuBtn')?.addEventListener('click', toggleMobileMenu);
+            initScrollToTop();
+
+            document.getElementById('close-donation-modal')?.addEventListener('click', hideDonationModal);
+            document.getElementById('donation-modal')?.addEventListener('click', (e) => {
+                if (e.target === document.getElementById('donation-modal')) hideDonationModal();
+            });
+            document.getElementById('donation-form')?.addEventListener('submit', handleDonationSubmit);
+            document.getElementById('is-anonymous')?.addEventListener('change', function() { toggleAnonymous(this); });
+
+            document.getElementById('amount-presets')?.querySelectorAll('[data-amount]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('donation-amount').value = btn.dataset.amount;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

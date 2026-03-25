@@ -48,6 +48,7 @@ DEBUG_TESTS=1 npx jest <test-file>
 - **Database**: PostgreSQL
 - **Frontend**: Vanilla JavaScript + Tailwind CSS (via CDN)
 - **Auth**: JWT tokens (jsonwebtoken + bcrypt)
+- **Validation**: express-validator for request validation in route handlers
 
 ### Key Architectural Decisions
 
@@ -59,7 +60,7 @@ DEBUG_TESTS=1 npx jest <test-file>
 
 **Image Uploads**: Cloudinary integration (`backend/config/cloudinary.js`) via multer middleware. Used for campaign images and report receipts.
 
-**Caching**: Server-side caching via `node-cache` (`backend/utils/cache.js`). Stats available at `/api/admin/cache-stats`.
+**Caching**: Server-side caching via `node-cache` (`backend/utils/cache.js`). TTLs vary by data type (1min for recent donations, 15min for campaigns, up to 1hr for campaign details). Cache is invalidated on mutations. Stats available at `/api/admin/cache-stats`.
 
 ### Route Structure & Middleware Pipeline
 - `/api/*` - Public endpoints (donations, campaigns, reports) - rate limited
@@ -69,8 +70,8 @@ DEBUG_TESTS=1 npx jest <test-file>
 - `/health` - Health check endpoint (returns status, timestamp, uptime)
 
 ### Rate Limiting
-- Public API: 100 requests per 15 minutes
-- Admin API: 100 requests per 15 minutes
+- Public API: 100 requests per 15 minutes (configurable via `RATE_LIMIT_*` env vars)
+- Admin API: 50 requests per 15 minutes
 - Login: 5 attempts per 15 minutes
 
 ### Testing
@@ -89,7 +90,8 @@ Tests use Jest with mocked database (no real DB needed). Test files in `backend/
 - `campaigns` - Fundraising campaigns with goal/current amounts
 - `donations` - All donations linked to campaigns
 - `reports` - Expense reports for campaigns
-- `admins` - Admin users (bcrypt-hashed passwords)
+- `admins` - Admin users (bcrypt-hashed passwords, roles: `admin`/`super_admin`, lockout tracking)
+- `audit_logs` - Admin action audit trail (JSONB old/new values, IP, user-agent)
 - `settings` - Key-value system settings
 - `daily_hashes` - Optional verification hashes
 
@@ -101,7 +103,24 @@ Ready-made HTML mockups in `desing/` folder (note: intentional misspelling in fo
 - `админ__создание_сбора.html`
 - `expense_reports_-_тепло_арктики.html`
 
-**Color scheme**: Primary #137fec, Background Light #f6f7f8, Dark #101922
+**New design direction** in `desing/new/`: High-end editorial aesthetic ("The Arctic Hearth") with deep navy palette, asymmetric layouts, tonal depth instead of borders, and "hearth" orange accents. See `desing/new/DESIGN.md` for full design system spec and `desing/new/code.html` for reference implementation. This replaces the original color scheme for new frontend work.
+
+**Color palette** (new): Surface #0e102c, Primary blue #4a8eff, Tertiary/orange #ffb77d, Surface containers #171935/#252744. No 1px borders — use tonal transitions for depth. See DESIGN.md for full token list.
+
+## Frontend Patterns
+
+- **No framework** — vanilla JS with Tailwind CSS via CDN. No build step for frontend.
+- **Admin auth** — `TokenManager` class in `public/js/admin.js` manages JWT in localStorage. All admin API calls go through `apiRequest()` helper which attaches the token and handles 401 redirects.
+- **Admin pages** — `public/admin/`: `index.html` (login), `dashboard.html` (transactions), `campaigns.html`, `reports.html`, `users.html` (super-admin), `audit-logs.html`. Each page has a corresponding JS module in `public/js/`.
+- **Dark mode** — class-based toggle (`dark` class on `<html>`), persisted in localStorage.
+- **Live feed** — `public/js/liveFeed.js` polls `/api/donations/recent` every 5 seconds.
+- **Locale** — all numbers/dates formatted with `ru-RU` locale.
+- **Language** — UI text is in Russian. Keep all user-facing strings in Russian.
+
+## Deployment
+
+- **Vercel**: Configured via `vercel.json` — all routes rewrite to the Express app.
+- **CI**: GitHub Actions (`.github/workflows/ci.yml`) runs tests on Node 18.x and 20.x.
 
 ## Implementation Notes
 

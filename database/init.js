@@ -79,6 +79,18 @@ async function initDatabase() {
     await pool.query(schema);
     console.log('✅ Схема базы данных создана');
 
+    // Выполняем миграции
+    const migrationsDir = __dirname;
+    const migrationFiles = fs.readdirSync(migrationsDir)
+      .filter(f => f.startsWith('migration_') && f.endsWith('.sql'))
+      .sort();
+
+    for (const file of migrationFiles) {
+      const migrationSQL = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
+      await pool.query(migrationSQL);
+      console.log(`✅ Миграция ${file} выполнена`);
+    }
+
     // Настройки администратора
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@teplo-arctici.ru';
     let adminPassword = process.env.ADMIN_PASSWORD;
