@@ -177,6 +177,16 @@
                 </div>
               </div>
 
+              <!-- Category -->
+              <div class="mb-6">
+                <label class="block mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Направление</label>
+                <select id="campaign-category" name="category" form="campaign-form" class="w-full h-12 px-4 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none">
+                  <option value="general">Общее</option>
+                  <option value="svo">Помощь защитникам (СВО)</option>
+                  <option value="children">Помощь детям</option>
+                </select>
+              </div>
+
               <!-- Status Toggle -->
               <div class="flex items-center justify-between py-4 border-t border-slate-100 dark:border-slate-800">
                 <div>
@@ -381,10 +391,13 @@
             <div class="p-6">
               <div class="flex items-start justify-between gap-2 mb-3">
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white line-clamp-2">${c.title}</h3>
-                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}">
-                  <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-slate-400'}"></span>
-                  ${isActive ? 'Активен' : 'Неактивен'}
-                </span>
+                <div class="flex flex-col gap-1 items-end flex-shrink-0">
+                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'}">
+                    <span class="w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-slate-400'}"></span>
+                    ${isActive ? 'Активен' : 'Неактивен'}
+                  </span>
+                  ${c.category && c.category !== 'general' ? `<span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${c.category === 'svo' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'}">${c.category === 'svo' ? 'СВО' : 'Дети'}</span>` : ''}
+                </div>
               </div>
               <p class="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">${c.description}</p>
 
@@ -435,6 +448,7 @@
         document.getElementById('campaign-description').value = campaign.description;
         document.getElementById('campaign-goal').value = campaign.goal_amount;
         document.getElementById('campaign-active').checked = campaign.is_active;
+        document.getElementById('campaign-category').value = campaign.category || 'general';
         document.getElementById('campaign-end-date').value = campaign.end_date ? campaign.end_date.split('T')[0] : '';
         document.getElementById('save-btn').textContent = 'Обновить';
 
@@ -446,6 +460,7 @@
         document.getElementById('breadcrumb-current').textContent = 'Создание нового сбора';
         document.getElementById('campaign-form').reset();
         document.getElementById('campaign-active').checked = true;
+        document.getElementById('campaign-category').value = 'general';
         document.getElementById('save-btn').textContent = 'Создать';
       }
     }
@@ -496,6 +511,7 @@
       formData.append('description', document.getElementById('campaign-description').value);
       formData.append('goal_amount', document.getElementById('campaign-goal').value);
       formData.append('is_active', document.getElementById('campaign-active').checked ? 'true' : 'false');
+      formData.append('category', document.getElementById('campaign-category').value);
 
       const endDate = document.getElementById('campaign-end-date').value;
       if (endDate) {

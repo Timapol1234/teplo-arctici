@@ -147,6 +147,28 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Автоматическое применение миграций при старте
+async function runMigrations() {
+  try {
+    const db = require('./config/database');
+    // Проверяем наличие колонки category в campaigns
+    const checkCol = await db.query(`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'campaigns' AND column_name = 'category'
+    `);
+    if (checkCol.rows.length === 0) {
+      await db.query(`ALTER TABLE campaigns ADD COLUMN category VARCHAR(20) DEFAULT 'general'`);
+      await db.query(`CREATE INDEX IF NOT EXISTS idx_campaigns_category ON campaigns(category)`);
+      await db.query(`CREATE INDEX IF NOT EXISTS idx_campaigns_active_category ON campaigns(is_active, category, created_at DESC)`);
+      console.log('✅ Миграция: добавлена колонка category в campaigns');
+    }
+  } catch (error) {
+    console.error('⚠️  Ошибка при выполнении миграций:', error.message);
+  }
+}
+
+runMigrations();
+
 // Запуск сервера
 app.listen(PORT, () => {
   console.log('');
