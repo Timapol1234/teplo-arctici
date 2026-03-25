@@ -167,24 +167,24 @@ async function runMigrations() {
   }
 }
 
-runMigrations();
-
-// Запуск сервера
-app.listen(PORT, () => {
-  console.log('');
-  console.log('╔════════════════════════════════════════════╗');
-  console.log('║     🔥 Тепло Арктики - Сервер запущен     ║');
-  console.log('╚════════════════════════════════════════════╝');
-  console.log('');
-  console.log(`🌐 Сервер: http://localhost:${PORT}`);
-  console.log(`📊 API: http://localhost:${PORT}/api`);
-  console.log(`🔧 Health: http://localhost:${PORT}/health`);
-  console.log(`🔐 Admin API: http://localhost:${PORT}/api/admin`);
-  console.log('');
-  console.log(`⚙️  Режим: ${process.env.NODE_ENV || 'development'}`);
-  console.log('');
-  console.log('Нажмите Ctrl+C для остановки сервера');
-  console.log('');
+// Запуск сервера после миграций
+runMigrations().then(() => {
+  app.listen(PORT, () => {
+    console.log('');
+    console.log('╔════════════════════════════════════════════╗');
+    console.log('║     🔥 Тепло Арктики - Сервер запущен     ║');
+    console.log('╚════════════════════════════════════════════╝');
+    console.log('');
+    console.log(`🌐 Сервер: http://localhost:${PORT}`);
+    console.log(`📊 API: http://localhost:${PORT}/api`);
+    console.log(`🔧 Health: http://localhost:${PORT}/health`);
+    console.log(`🔐 Admin API: http://localhost:${PORT}/api/admin`);
+    console.log('');
+    console.log(`⚙️  Режим: ${process.env.NODE_ENV || 'development'}`);
+    console.log('');
+    console.log('Нажмите Ctrl+C для остановки сервера');
+    console.log('');
+  });
 });
 
 // Graceful shutdown

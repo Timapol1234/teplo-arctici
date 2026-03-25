@@ -12,6 +12,34 @@ const verificationRoutes = require('../backend/routes/verification');
 
 const app = express();
 
+// Автоматическое применение миграций (один раз при первом запросе)
+let migrationsApplied = false;
+async function ensureMigrations() {
+  if (migrationsApplied) return;
+  migrationsApplied = true;
+  try {
+    const db = require('../backend/config/database');
+    const checkCol = await db.query(`
+      SELECT column_name FROM information_schema.columns
+      WHERE table_name = 'campaigns' AND column_name = 'category'
+    `);
+    if (checkCol.rows.length === 0) {
+      await db.query(`ALTER TABLE campaigns ADD COLUMN category VARCHAR(20) DEFAULT 'general'`);
+      await db.query(`CREATE INDEX IF NOT EXISTS idx_campaigns_category ON campaigns(category)`);
+      await db.query(`CREATE INDEX IF NOT EXISTS idx_campaigns_active_category ON campaigns(is_active, category, created_at DESC)`);
+      console.log('✅ Миграция: добавлена колонка category в campaigns');
+    }
+  } catch (error) {
+    migrationsApplied = false; // Повторить при следующем запросе
+    console.error('⚠️  Ошибка при выполнении миграций:', error.message);
+  }
+}
+
+app.use(async (req, res, next) => {
+  await ensureMigrations();
+  next();
+});
+
 // Trust proxy for Vercel/cloud deployments (needed for rate limiting)
 app.set('trust proxy', 1);
 
