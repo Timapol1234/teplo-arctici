@@ -307,6 +307,22 @@ function toggleMobileMenu() {
   }
 }
 
+// Scroll-triggered fade-in animations
+function initScrollAnimations() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in-section').forEach(el => {
+    observer.observe(el);
+  });
+}
+
 // Scroll to top button
 function initScrollToTop() {
   const scrollBtn = document.getElementById('scrollToTop');
@@ -384,6 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Инициализация scroll-to-top кнопки
   initScrollToTop();
+
+  // Scroll-triggered анимации
+  initScrollAnimations();
 
   // Обработчики модального окна
   const modal = document.getElementById('donation-modal');
