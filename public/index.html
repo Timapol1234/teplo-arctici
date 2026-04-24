@@ -39,8 +39,24 @@
         }
     </script>
     <style>
+        @font-face {
+            font-family: 'Corki';
+            src: url('/fonts/Corki-Regular.otf') format('opentype'),
+                 url('/fonts/Corki-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
         body {
             font-family: 'Inter', sans-serif;
+        }
+        .font-times-italic {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+        .font-corki-military {
+            font-family: 'Corki', 'Times New Roman', serif;
+            color: #4b5320;
         }
         .line-clamp-2 {
             display: -webkit-box;
@@ -154,7 +170,7 @@
             <!-- Top row: quote left, slogan right -->
             <div class="flex justify-between items-start gap-8">
                 <div class="max-w-md text-left bg-black/30 backdrop-blur-sm rounded-2xl p-5 md:p-6">
-                    <p class="text-white text-base md:text-lg lg:text-xl font-medium leading-relaxed" style="text-shadow: 1px 2px 8px rgba(0,0,0,0.6);">
+                    <p class="font-times-italic text-white text-base md:text-lg lg:text-xl font-medium leading-relaxed" style="text-shadow: 1px 2px 8px rgba(0,0,0,0.6);">
                         &laquo;Первый региональный благотворительный фонд Мурманской области,
                         созданный при поддержке Правительства региона в целях оказания
                         помощи участникам СВО и детям региона, нуждающимся
@@ -162,7 +178,7 @@
                     </p>
                 </div>
                 <div class="max-w-md text-right bg-black/30 backdrop-blur-sm rounded-2xl p-5 md:p-6">
-                    <p class="text-white text-lg md:text-2xl italic font-medium leading-snug" style="text-shadow: 1px 2px 8px rgba(0,0,0,0.6);">
+                    <p class="font-times-italic text-white text-lg md:text-2xl font-medium leading-snug" style="text-shadow: 1px 2px 8px rgba(0,0,0,0.6);">
                         Помогаем тем, кто сражается за нашу жизнь,
                         и тем, кто эту жизнь только начинает
                     </p>
@@ -184,108 +200,54 @@
         </div>
     </section>
 
-    <!-- Two Directions Section -->
-    <section class="relative w-full min-h-[600px] md:min-h-[700px] flex flex-col md:flex-row overflow-hidden">
-        <!-- Left: Help the Defenders -->
-        <div class="relative flex-1 group overflow-hidden border-b md:border-b-0 md:border-r border-outline-variant/10">
-            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('/img/svo-bg.jpg');"></div>
-            <div class="absolute inset-0 arctic-gradient-left"></div>
-            <div class="relative h-full flex flex-col px-8 md:px-12 lg:px-16 pt-16 md:pt-24 pb-16">
-                <div class="mb-6 flex items-center gap-4">
-                    <div class="p-3 bg-white/40 backdrop-blur-md rounded-xl border border-outline-variant/20">
-                        <span class="material-symbols-outlined text-3xl text-primary">shield</span>
-                    </div>
-                </div>
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6 leading-[0.9] text-glow text-[#3f4273]">Помощи<br>защитникам<br>региона</h2>
-                <p class="text-on-surface-variant max-w-md mb-8 text-base leading-relaxed">
-                    Поддержите тех, кто прямо сейчас защищает нашу Родину.<br>
-                    Адресная помощь участникам СВО и ветеранам.<br><br>
-                    Выберите, как помочь:<br>
-                    • Конкретному подразделению из представленного перечня<br>
-                    • В общий фонд помощи направления 'СВО' (направление распределяется по решению Совета фонда на самые срочные нужды подразделений)
-                </p>
-                <div class="mt-auto flex flex-col sm:flex-row gap-4">
-                    <a href="/svo.html" class="bg-[#3f4273] text-white px-8 py-4 rounded font-bold uppercase tracking-wider text-xs shadow-lg hover:bg-[#575a8c] transition-all text-center">
-                        Поддержать героев региона
-                    </a>
-                    <a href="/svo.html" class="bg-white/60 backdrop-blur-md border border-slate-200 text-[#0d141b] px-8 py-4 rounded font-bold uppercase tracking-wider text-xs hover:bg-slate-100 transition-all text-center">
-                        Узнать больше
-                    </a>
-                </div>
-                <!-- Progress Bar -->
-                <div class="mt-6 flex flex-col items-start gap-2">
-                    <div class="flex items-center gap-3">
-                        <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Собрано средств всего:</span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-                    </div>
-                    <div class="w-48 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-                        <div class="h-full w-0 bg-gradient-to-r from-secondary to-secondary-container transition-all duration-1000" id="svo-progress-bar"></div>
-                    </div>
-                    <span class="text-[11px] font-mono text-on-surface-variant" id="svo-progress-text">Загрузка...</span>
+    <!-- Defenders Section (Full Width) -->
+    <section class="relative w-full min-h-[600px] md:min-h-[700px] overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105" style="background-image: url('/img/svo-bg.jpg');"></div>
+        <div class="absolute inset-0 arctic-gradient-left"></div>
+        <div class="relative h-full flex flex-col px-8 md:px-12 lg:px-16 pt-16 md:pt-24 pb-16 max-w-[1200px] mx-auto">
+            <div class="mb-6 flex items-center gap-4">
+                <div class="p-3 bg-white/40 backdrop-blur-md rounded-xl border border-outline-variant/20">
+                    <span class="material-symbols-outlined text-3xl" style="color: #4b5320;">shield</span>
                 </div>
             </div>
-        </div>
-        <!-- Right: Help Children -->
-        <div class="relative flex-1 group overflow-hidden">
-            <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image: url('/img/children-bg.jpg');"></div>
-            <div class="absolute inset-0 arctic-gradient-right"></div>
-            <div class="relative h-full flex flex-col px-8 md:px-12 lg:px-16 pt-16 md:pt-24 pb-16">
-                <div class="max-w-md md:ml-auto flex flex-col flex-1">
-                    <div class="mb-6 flex items-center gap-4">
-                        <div class="p-3 bg-white/40 backdrop-blur-md rounded-xl border border-[#ff8c00]/20">
-                            <span class="material-symbols-outlined bg-gradient-to-br from-[#8a5100] via-[#d48806] to-[#ff8c00] bg-clip-text text-transparent text-3xl" style="font-variation-settings: 'FILL' 1;">favorite</span>
-                        </div>
-                    </div>
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6 leading-[0.9] text-glow bg-gradient-to-br from-[#8a5100] via-[#d48806] to-[#ff8c00] bg-clip-text text-transparent">Помощь<br>детям<br>региона</h2>
-                    <p class="text-on-surface-variant mb-8 text-base leading-relaxed">
-                        Срочная помощь детям Мурманской области. Операции, лечение, реабилитация —
-                        когда счёт идёт на дни.<br><br>
-                        Выберите, как помочь:<br>
-                        • Конкретному ребёнку (выберите при переходе на следующую страницу по кнопке ниже — средства пойдут строго для него)<br>
-                        • В общий фонд помощи направления 'Дети региона' (направление распределяется по решению Совета фонда на самые срочные нужды)
-                    </p>
-                    <div class="mt-auto flex flex-col sm:flex-row gap-4">
-                        <a href="/children.html" class="relative overflow-hidden bg-gradient-to-br from-[#ffbf00] via-[#ff8c00] to-[#e65100] text-white px-8 py-4 rounded font-bold uppercase tracking-wider text-xs shadow-xl shadow-orange-900/20 hover:brightness-110 transition-all text-center">
-                            Помочь детям региона
-                        </a>
-                        <a href="/children.html" class="bg-white/60 backdrop-blur-md border border-slate-200 text-[#0d141b] px-8 py-4 rounded font-bold uppercase tracking-wider text-xs hover:bg-slate-100 transition-all text-center">
-                            Узнать больше
-                        </a>
-                    </div>
-                    <!-- Progress Bar -->
-                    <div class="mt-6 flex flex-col items-start gap-2">
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] uppercase font-bold tracking-widest text-tertiary">Собрано средств всего:</span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
-                        </div>
-                        <div class="w-48 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-tertiary to-on-tertiary-container w-0 transition-all duration-1000" id="children-progress-bar"></div>
-                        </div>
-                        <span class="text-[11px] font-mono text-on-surface-variant" id="children-progress-text">Загрузка...</span>
-                    </div>
+            <h2 class="font-corki-military text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter mb-6 leading-[0.9] text-glow">Помощи<br>Защитникам<br>Региона</h2>
+            <p class="text-on-surface-variant max-w-md mb-8 text-base leading-relaxed">
+                Поддержите тех, кто прямо сейчас защищает нашу Родину.<br>
+                Адресная помощь участникам СВО и ветеранам.<br><br>
+                Выберите, как помочь:<br>
+                • Конкретному подразделению из представленного перечня<br>
+                • В общий фонд помощи направления 'СВО' (направление распределяется по решению Совета фонда на самые срочные нужды подразделений)
+            </p>
+            <div class="mt-auto flex flex-col sm:flex-row gap-4">
+                <a href="/svo.html" class="text-white px-8 py-4 rounded font-bold uppercase tracking-wider text-xs shadow-lg hover:brightness-110 transition-all text-center" style="background-color: #4b5320;">
+                    Поддержать героев региона
+                </a>
+                <a href="/svo.html" class="bg-white/60 backdrop-blur-md border border-slate-200 text-[#0d141b] px-8 py-4 rounded font-bold uppercase tracking-wider text-xs hover:bg-slate-100 transition-all text-center">
+                    Узнать больше
+                </a>
+            </div>
+            <!-- Progress Bar -->
+            <div class="mt-6 flex flex-col items-start gap-2">
+                <div class="flex items-center gap-3">
+                    <span class="text-[10px] uppercase font-bold tracking-widest" style="color: #4b5320;">Собрано средств всего:</span>
+                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background-color: #4b5320;"></span>
                 </div>
+                <div class="w-48 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+                    <div class="h-full w-0 transition-all duration-1000" id="svo-progress-bar" style="background: linear-gradient(to right, #4b5320, #6b7c3a);"></div>
+                </div>
+                <span class="text-[11px] font-mono text-on-surface-variant" id="svo-progress-text">Загрузка...</span>
             </div>
         </div>
         <!-- Trust Badges (Centered) -->
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-6 opacity-60 bg-white/60 backdrop-blur-md px-6 py-3 rounded-full">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-on-surface-variant">workspace_premium</span>
-                <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Герои Севера</span>
+                <span class="text-[10px] uppercase font-bold tracking-widest" style="color: #4b5320;">Герои Севера</span>
             </div>
             <div class="w-px h-4 bg-slate-300"></div>
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-on-surface-variant">verified</span>
-                <span class="text-[10px] uppercase font-bold tracking-widest text-[#3f4273]">Официальный фонд</span>
-            </div>
-        </div>
-        <!-- Centered Floating Heart Badge (Desktop Only) -->
-        <div class="hidden lg:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-            <div class="relative">
-                <div class="absolute inset-0 bg-[#ff8c00]/20 blur-[100px] rounded-full"></div>
-                <div class="w-24 h-24 bg-white border-4 border-white p-4 rounded-2xl flex items-center justify-center shadow-2xl relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-br from-[#ffbf00] via-[#ff8c00] to-[#ff4500] opacity-20"></div>
-                    <span class="material-symbols-outlined text-5xl bg-gradient-to-br from-[#ffbf00] via-[#ff8c00] to-[#ff4500] bg-clip-text text-transparent" style="font-variation-settings: 'FILL' 1;">favorite</span>
-                </div>
+                <span class="text-[10px] uppercase font-bold tracking-widest" style="color: #4b5320;">Официальный фонд</span>
             </div>
         </div>
         <!-- Плавный переход к тёмной секции статистики -->
